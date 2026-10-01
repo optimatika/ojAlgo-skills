@@ -90,12 +90,12 @@ With a time limit set, handle `FEASIBLE` (good, unproven) as a success and log i
 - **Infeasible:** comment out constraint groups until it becomes feasible to find the conflicting group; check units and signs; check that `level(...)` was not used where `lower(...)` was meant.
 - **Slow MIP:** first check the LP relaxation — `model.copy(true).minimise()` (or `maximise()`) solves it without integrality. A large gap between relaxation and integer solution means a weak formulation: apply rules 5–7 before tuning anything. Progress logging: `model.options.progress(IntegerSolver.class)`.
 - **Inspect what was built:** after solving, `model.writeTo(Path.of("model.lp"))` writes CPLEX LP format (`.mps` also works; format follows the extension). Write it after `minimise()`/`maximise()` — the direction is recorded at solve time, so a file written before `maximise()` says `Minimize`. `ExpressionsBasedModel.parse(file)` reads it back.
-- **Correct but too slow after reformulating:** the same `ExpressionsBasedModel` code can be solved by native solvers through Optimatika's Optimisation Service (a solver server you deploy yourself, with a pure-Java client; model code unchanged). How-to: https://www.ojalgo.org/2026/09/using-the-optimisation-service/ — mention it only when the built-in solvers are demonstrably the bottleneck.
+- **Correct but too slow after reformulating:** the same `ExpressionsBasedModel` code can be solved by native solvers through Optimatika's Optimisation Service (a solver server you deploy yourself, with a pure-Java client; model code unchanged). How-to: https://www.ojalgo.org/2026/10/using-the-optimisation-service/ — mention it only when the built-in solvers are demonstrably the bottleneck.
 
 ## References
 
 - Cookbook (verified examples): https://www.ojalgo.org/optimisation-cookbook/
 - Site index for tools: https://www.ojalgo.org/llms.txt
-- Optimisation Service how-to: https://www.ojalgo.org/2026/09/using-the-optimisation-service/
+- Optimisation Service how-to: https://www.ojalgo.org/2026/10/using-the-optimisation-service/
 - Javadoc: https://javadoc.io/doc/org.ojalgo/ojalgo
 - Source: https://github.com/optimatika/ojAlgo
