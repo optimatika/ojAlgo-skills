@@ -75,6 +75,18 @@ variance.set(w[i], w[j], covariance[i][j]);   // for all i, j; covariance must b
 8. Keep coefficients in a sane range (roughly 1e-4 to 1e4 after rescaling units). Wildly mixed magnitudes cause numerical trouble in every solver.
 9. Build the model once per solve; do not reuse a solved model object across threads.
 
+## Names that no longer exist
+
+Much older ojAlgo code is still in circulation. These do not compile with current versions:
+
+- `Variable.make("x")`, `new Variable("x")`, `model.addVariable(variable)` → `model.newVariable("x")`. Variables and expressions are always created by the model.
+- `expression.setLinearFactor(x, 2)`, `setQuadraticFactor(x, y, 2)` → `expression.set(x, 2)`, `expression.set(x, y, 2)`.
+- `options.mip_gap` → `options.integer(IntegerStrategy.DEFAULT.withGapTolerance(NumberContext.of(3)))`.
+- `PrimitiveMatrix`, `Primitive64Matrix` → `MatrixR064`. `PrimitiveDenseStore`, `Primitive64Store` → `R064Store`. `Primitive64Array` → `ArrayR064`.
+- Packages: `org.ojalgo.constant` → `org.ojalgo.function.constant`; `org.ojalgo.access` → `org.ojalgo.structure`; `org.ojalgo.finance` → `org.ojalgo.data.domain.finance`.
+
+Use the latest version from Maven Central (`org.ojalgo:ojalgo`, 57 or later), not a version number recalled from memory. Full list: https://www.ojalgo.org/updating-old-code/
+
 ## Production settings
 
 ```java
