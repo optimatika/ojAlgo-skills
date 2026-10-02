@@ -1,7 +1,6 @@
 {
   "name": "ojalgo",
   "description": "Write correct, fast LP, QP and MIP models in Java or Kotlin with ojAlgo.",
-  "version": "1.0.0",
   "author": {
     "name": "Optimatika AB",
     "url": "https://www.optimatika.se/"
