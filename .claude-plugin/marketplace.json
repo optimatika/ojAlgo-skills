@@ -9,7 +9,7 @@
     {
       "name": "ojalgo",
       "source": "./plugins/ojalgo",
-      "description": "Write correct, fast LP, QP and MIP models in Java or Kotlin with ojAlgo."
+      "description": "Write correct, fast LP, QP and MIP models in Java, Kotlin, Scala or any other JVM language with ojAlgo."
     }
   ]
 }

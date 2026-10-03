@@ -1,6 +1,6 @@
 ---
 name: ojalgo-optimisation
-description: Write correct, fast optimisation models in Java or Kotlin with ojAlgo (LP, QP, MIP). Use when a JVM application must decide an allocation, assignment, schedule, packing, selection, blend, location or portfolio under constraints, or when existing ojAlgo code is slow, infeasible or returns wrong answers.
+description: Write correct, fast optimisation models in Java, Kotlin, Scala or any other JVM language with ojAlgo (LP, QP, MIP). Use when a JVM application must decide an allocation, assignment, schedule, packing, selection, blend, location or portfolio under constraints, or when existing ojAlgo code is slow, infeasible or returns wrong answers.
 ---
 
 # Optimisation models with ojAlgo
