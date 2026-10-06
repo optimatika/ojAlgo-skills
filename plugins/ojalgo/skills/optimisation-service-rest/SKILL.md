@@ -31,8 +31,11 @@ There are two modellers at level 3 for a reason. `OptModel` ships in the client 
 | `POST` | `/optimisation/v1/put-on-queue/{format}/{sense}` | Submit a model. `format` is `MPS` or `LP`; `sense` is `MIN` or `MAX`. Body: the model file as raw bytes. |
 | `GET` | `/optimisation/v1/poll-result/{key}` | Status, and the result when done. |
 | `POST` | `/optimisation/v1/translate/{from}/{to}` | Convert a model between `MPS`, `LP` and `EBM` (ojAlgo's own format). |
-| `GET` | `/optimisation/v1/test` | Is the service up, and which solvers are loaded. |
+| `POST` | `/optimisation/v1/abort/{key}` | Abandon a queued or running solve. It goes to `DONE` with no `result`. |
 | `GET` | `/optimisation/v1/environment` | Build, licence state, available solvers. |
+| `GET` | `/health` | Health check: a status code and no body. |
+
+The full OpenAPI specification: https://www.optimatika.se/optimisation-service/openapi.yaml
 
 Submitting returns:
 
@@ -97,6 +100,9 @@ while True:
     time.sleep(delay)
     delay = min(delay * 2, 10)
 
+if "result" not in body:            # DONE without a result: the solve was aborted or failed outright
+    raise RuntimeError("the solve finished without a result")
+
 state, rest = body["result"].split(" ", 1)
 value, vector = rest.split(" @ ")
 solution = [float(v) for v in vector.strip("{} ").split(",") if v.strip()]
@@ -107,8 +113,8 @@ if state in ("OPTIMAL", "FEASIBLE"):
 
 ## Rules
 
-1. **Check the state before using the numbers.** `OPTIMAL` is a proven optimum; `FEASIBLE` is a usable solution not proven optimal. `INFEASIBLE`, `UNBOUNDED` and `FAILED` carry no solution to use.
-2. **Set your own time limit and back off between polls.** The server has no solve timeout; a large MIP can run for a long time by design.
+1. **`DONE` means stop polling, not that there is a solution.** An aborted solve, or one that failed outright, is `DONE` with no `result` field. Then check the state before using the numbers: `OPTIMAL` is a proven optimum; `FEASIBLE` is a usable solution not proven optimal. `INFEASIBLE`, `UNBOUNDED` and `FAILED` carry no solution to use.
+2. **Set your own time limit and back off between polls.** The server has no solve timeout; a large MIP can run for a long time by design. When you give up, `POST /optimisation/v1/abort/{key}` so the server stops working on it.
 3. **Map the vector by variable order.** The solution has no names. Keep the list of variables in the order they were written to the model file.
 4. **Round integer and binary values.** Solvers return 0.9999999 for 1; never compare with `==`.
 5. **Handle the status codes.** `400`: the model could not be parsed, or an unknown format or sense. `404`: unknown key, or a result that expired (results are kept one hour after last access). `429`: the queue is full; retry with backoff. `500`: the solve failed; the detail is in the server log, not the response.
