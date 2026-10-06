@@ -20,11 +20,11 @@ Four skills in the open [Agent Skills](https://agentskills.io) format. Each is a
 
 - `ojalgo-optimisation`: writing and debugging optimisation models with ojAlgo.
 
-Three more cover Optimatika's [Optimisation Service](https://www.optimatika.se/optimisation-service/), a solver server you deploy yourself that runs HiGHS, SCIP and Clarabel alongside ojAlgo's own solvers. They match the three ways to use it:
+Three more cover Optimatika's [Optimisation Service](https://www.optimatika.se/optimisation-service/), a solver server you deploy yourself that runs HiGHS, SCIP and Clarabel alongside ojAlgo's own solvers. The service can be used at three levels, and the skills follow them:
 
-- `optimisation-service-rest`: the REST API, from any programming language. Submit a model as MPS or LP text, poll for the result.
-- `optimisation-service-client`: the Java client library, for any JVM language. Build a model with its small modelling API, or submit model files.
-- `optimisation-service-ojalgo`: existing ojAlgo code. Register the service as a remote solver and keep the model code unchanged.
+- `optimisation-service-rest` (level 1): the REST API, from any programming language. Submit a model as MPS or LP text, poll for the result.
+- `optimisation-service-client` (levels 2 and 3): the Java client library, for any JVM language. Submit model files with the dedicated client, or build the model in code with its own modeller, `OptModel`, which needs no ojAlgo and runs on older Java versions.
+- `optimisation-service-ojalgo` (level 3): existing ojAlgo code. Plug the client into ojAlgo's own modeller, `ExpressionsBasedModel`, as a remote solver and keep the model code unchanged.
 
 Each also covers running the server, the free tier and licence keys.
 

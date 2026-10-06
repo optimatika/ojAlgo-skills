@@ -9,7 +9,20 @@ The Optimisation Service is a solver server from Optimatika, the company behind 
 
 The REST API is the foundation: submit a model as text, get a key, poll for the result. Any language with an HTTP client can use it.
 
-The same service can also be used from JVM code through a client library (skill `optimisation-service-client`), or from existing ojAlgo code with no model changes (skill `optimisation-service-ojalgo`).
+This skill covers level 1.
+
+## Which way in
+
+The service can be used at three levels. Each builds on the one before.
+
+| Level | What you use | Choose it when | Skill |
+|---|---|---|---|
+| 1 | The **REST API** | Any programming language. You supply the model as MPS or LP text. | `optimisation-service-rest` |
+| 2 | **`OptClientV1`**, the dedicated Java client | JVM code that already has model files, or wants direct control of submitting and polling. | `optimisation-service-client` |
+| 3a | **`OptModel`**, a modeller on top of the client | JVM code that builds the model in code and does not use ojAlgo, or must run on an older Java version. | `optimisation-service-client` |
+| 3b | ojAlgo's **`ExpressionsBasedModel`**, with the client plugged in as a remote solver | The application already uses ojAlgo, or can run on the latest Java version. | `optimisation-service-ojalgo` |
+
+There are two modellers at level 3 for a reason. `OptModel` ships in the client library, needs no ojAlgo dependency, and is kept working on older Java versions. `ExpressionsBasedModel` is ojAlgo's own, far richer modeller; ojAlgo follows the Java release train, and from Java 28 on it will always require the latest Java version. Do not move a project to ojAlgo just to use the service, and do not rewrite existing ojAlgo models as `OptModel`.
 
 ## The protocol
 

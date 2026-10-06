@@ -40,4 +40,8 @@ echo "==> 3/4 Client skill (expect model: value 2200, chairs 24, tables 14, rush
 java -cp "${CP}" ClientSkill; echo
 
 echo "==> 4/4 ojAlgo skill (expect OPTIMAL 2200, chairs=24 tables=14, variable.getValue()=null)"
-java -cp "${CP}" OjAlgoSkill
+java -cp "${CP}" OjAlgoSkill; echo
+
+echo "==> Modeller comparison (expect value 2200, chairs 24, tables 14, from both)"
+java -cp "${CP}" CompareOptModel
+java -cp "${CP}" CompareExpressionsBasedModel

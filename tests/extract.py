@@ -38,6 +38,20 @@ java_class("ClientSkill", blocks("optimisation-service-client", "java"), [
     "System.out.println(client.getServiceEnvironment());",
 ])
 
+reference = (skills / "optimisation-service-client" / "references" / "modellers.md").read_text(encoding="utf-8")
+copy = (skills / "optimisation-service-ojalgo" / "references" / "modellers.md").read_text(encoding="utf-8")
+if reference != copy:
+    sys.exit("references/modellers.md differs between the client skill and the ojAlgo skill - they must be identical")
+comparison = re.findall(r"```java\n(.*?)```", reference, re.S)
+
+java_class("CompareOptModel", [comparison[0]], [
+    'System.out.println("OptModel:              optimal=" + result.isOptimal() + " value=" + result.getValue() + " chairs=" + chairs.doubleValue() + " tables=" + tables.doubleValue());',
+])
+
+java_class("CompareExpressionsBasedModel", [comparison[1]], [
+    'System.out.println("ExpressionsBasedModel: " + result + " chairs=" + chairs.getValue() + " tables=" + tables.getValue());',
+])
+
 java_class("OjAlgoSkill", blocks("optimisation-service-ojalgo", "java"), [
     'System.out.println("result: " + result);',
     'System.out.println("chairs=" + result.doubleValue(model.indexOf(chairs)) + " tables=" + result.doubleValue(model.indexOf(tables)) + " variable.getValue()=" + chairs.getValue());',

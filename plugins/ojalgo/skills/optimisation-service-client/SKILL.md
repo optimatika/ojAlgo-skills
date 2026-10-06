@@ -9,7 +9,22 @@ The Optimisation Service is a solver server from Optimatika, the company behind 
 
 The client library is one Maven dependency with no transitive dependencies. It has two independent layers: `OptClientV1`, a thin HTTP client, and `OptModel`, a small modelling API. The application gets a solver without any native code or solver library on its own classpath.
 
-Other ways in: any language can call the REST API directly (skill `optimisation-service-rest`), and existing ojAlgo `ExpressionsBasedModel` code can solve remotely without being rewritten (skill `optimisation-service-ojalgo`).
+This skill covers levels 2 and 3a.
+
+## Which way in
+
+The service can be used at three levels. Each builds on the one before.
+
+| Level | What you use | Choose it when | Skill |
+|---|---|---|---|
+| 1 | The **REST API** | Any programming language. You supply the model as MPS or LP text. | `optimisation-service-rest` |
+| 2 | **`OptClientV1`**, the dedicated Java client | JVM code that already has model files, or wants direct control of submitting and polling. | `optimisation-service-client` |
+| 3a | **`OptModel`**, a modeller on top of the client | JVM code that builds the model in code and does not use ojAlgo, or must run on an older Java version. | `optimisation-service-client` |
+| 3b | ojAlgo's **`ExpressionsBasedModel`**, with the client plugged in as a remote solver | The application already uses ojAlgo, or can run on the latest Java version. | `optimisation-service-ojalgo` |
+
+There are two modellers at level 3 for a reason. `OptModel` ships in the client library, needs no ojAlgo dependency, and is kept working on older Java versions. `ExpressionsBasedModel` is ojAlgo's own, far richer modeller; ojAlgo follows the Java release train, and from Java 28 on it will always require the latest Java version. Do not move a project to ojAlgo just to use the service, and do not rewrite existing ojAlgo models as `OptModel`.
+
+For a step-by-step comparison of the two modellers, and how to translate a model from one to the other, read `references/modellers.md`.
 
 ```xml
 <dependency>
@@ -21,21 +36,53 @@ Other ways in: any language can call the REST API directly (skill `optimisation-
 
 Requires Java 11 or later.
 
-## Build and solve a model
+## Connect
 
 ```java
-import java.util.concurrent.TimeUnit;
-
 import se.optimatika.optimisation.service.client.OptClientV1;
-import se.optimatika.optimisation.service.client.OptModel;
-import se.optimatika.optimisation.service.client.OptResult;
-import se.optimatika.optimisation.service.client.OptVariable;
 
 OptClientV1 client = OptClientV1.newInstance("https://your-service-host");
 
 if (!client.isServiceAvailable()) {
     throw new IllegalStateException("Optimisation Service not reachable");
 }
+```
+
+## Level 2: the client, with a model file
+
+`OptClientV1` submits a model as bytes and polls for the result. Use it when the model already exists as an MPS or LP file.
+
+```java
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Map;
+
+import se.optimatika.optimisation.service.client.OptResult;
+
+byte[] data = Files.readAllBytes(Path.of("model.mps"));
+
+Map<String, Object> submitted = client.putOnQueueParsed(data, "MPS", false);   // false = minimise
+String key = (String) submitted.get(OptClientV1.KEY);
+
+Map<String, Object> poll = client.pollResultParsed(key);
+while ("PENDING".equals(poll.get(OptClientV1.STATUS))) {
+    Thread.sleep(500);
+    poll = client.pollResultParsed(key);
+}
+OptResult fileResult = (OptResult) poll.get(OptClientV1.RESULT);
+```
+
+The solution is `fileResult.getSolution()`, a list in the order of the variables in the file.
+
+## Level 3a: the `OptModel` modeller
+
+`OptModel` builds the model in code, serialises it, runs the submit-and-poll loop and maps the result back.
+
+```java
+import java.util.concurrent.TimeUnit;
+
+import se.optimatika.optimisation.service.client.OptModel;
+import se.optimatika.optimisation.service.client.OptVariable;
 
 OptModel model = client.newModel();
 
@@ -64,32 +111,10 @@ if (result.isFeasible()) {
 
 Quadratic objective terms: `model.objective().set(x, y, coefficient)`.
 
-## Submit an existing MPS or LP file
-
-```java
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.Map;
-
-byte[] data = Files.readAllBytes(Path.of("model.mps"));
-
-Map<String, Object> submitted = client.putOnQueueParsed(data, "MPS", false);   // false = minimise
-String key = (String) submitted.get(OptClientV1.KEY);
-
-Map<String, Object> poll = client.pollResultParsed(key);
-while ("PENDING".equals(poll.get(OptClientV1.STATUS))) {
-    Thread.sleep(500);
-    poll = client.pollResultParsed(key);
-}
-OptResult fileResult = (OptResult) poll.get(OptClientV1.RESULT);
-```
-
-Here the solution is `fileResult.getSolution()`, a list in the order of the variables in the file.
-
 ## Rules
 
 1. **Check `isOptimal()` or `isFeasible()` before reading values.** Without a feasible result the variables hold no solution.
-2. **Put a timeout on `get(...)`.** The server has no solve time limit. To give up on a solve, call `cancel(true)` on the `Future`: that also aborts it on the server and frees the worker. `cancel(false)` only stops waiting locally.
+2. **Put a time limit on waiting**: a timeout on `get(...)` at level 3a, your own deadline in the polling loop at level 2. The server has no solve time limit. To give up on a solve, call `cancel(true)` on the `Future`: that also aborts it on the server and frees the worker. `cancel(false)` only stops waiting locally.
 3. **Round integer and binary values.** Use `Math.round(v.doubleValue())` and `> 0.5`, never `==`.
 4. **Create the client once and reuse it.** Create a new `OptModel` per problem.
 5. **Print `client.getServiceEnvironment()` when something is unexpected.** It shows the server's build, licence state and available solvers.
