@@ -1,12 +1,12 @@
 # ojAlgo
 
-Teaches Claude to write correct, fast optimisation models in Java, Kotlin, Scala or any other JVM language with [ojAlgo](https://www.ojalgo.org/), the pure-Java, zero-dependency library for linear (LP), quadratic (QP) and mixed-integer (MIP) programming.
+Teaches an AI coding assistant to write correct, fast optimisation models in Java, Kotlin, Scala or any other JVM language with [ojAlgo](https://www.ojalgo.org/), the pure-Java, zero-dependency library for linear (LP), quadratic (QP) and mixed-integer (MIP) programming.
 
 ## When it helps
 
 Use it when a JVM application has to decide something under constraints: allocate, assign, schedule, pack, select, blend, locate, or build a portfolio. It also helps when existing ojAlgo code is slow, infeasible or returns wrong answers.
 
-With the plugin, Claude will:
+With the plugin, the assistant will:
 
 - decide whether a solver is needed at all, and which problem type it is;
 - start from a verified recipe in the [Optimisation Cookbook](https://www.ojalgo.org/optimisation-cookbook/) instead of writing a model from scratch;
@@ -28,7 +28,7 @@ Three more cover Optimatika's [Optimisation Service](https://www.optimatika.se/o
 
 Each also covers running the server, the free tier and licence keys.
 
-The plugin contains no code, hooks, scripts or MCP servers. It runs nothing, stores nothing and sends nothing anywhere. The skills refer Claude to public pages on ojalgo.org and optimatika.se. Code that Claude writes with the service skills sends your model to a server address that you supply.
+The plugin contains no code, hooks, scripts or MCP servers. It runs nothing, stores nothing and sends nothing anywhere. The skills refer the assistant to public pages on ojalgo.org and optimatika.se. Code that the assistant writes with the service skills sends your model to a server address that you supply.
 
 ## Example prompts
 

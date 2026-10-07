@@ -1,0 +1,11 @@
+{
+  "shortDescription": "LP, QP and MIP on the JVM",
+  "category": "Coding",
+  "capabilities": ["Read", "Write"],
+  "websiteURL": "https://www.ojalgo.org/",
+  "defaultPrompt": [
+    "Assign 40 orders to 6 trucks with weight limits, using as few trucks as possible. Java, with ojAlgo.",
+    "This ojAlgo model returns INFEASIBLE. Help me find which constraint is the problem.",
+    "This ojAlgo MIP is too slow. Show me how to solve it on the Optimisation Service instead."
+  ]
+}
