@@ -1,8 +1,14 @@
 {
   "shortDescription": "LP, QP and MIP on the JVM",
-  "category": "Coding",
-  "capabilities": ["Read", "Write"],
+  "category": "Developer Tools",
+  "capabilities": [
+    "Write optimisation models with ojAlgo",
+    "Debug infeasible or slow models",
+    "Solve models on the Optimisation Service"
+  ],
   "websiteURL": "https://www.ojalgo.org/",
+  "supportURL": "https://www.ojalgo.org/support-community/",
+  "privacyPolicyURL": "https://www.optimatika.se/privacy-policy/",
   "defaultPrompt": [
     "Assign 40 orders to 6 trucks with weight limits, using as few trucks as possible. Java, with ojAlgo.",
     "This ojAlgo model returns INFEASIBLE. Help me find which constraint is the problem.",

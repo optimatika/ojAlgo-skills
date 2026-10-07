@@ -6,10 +6,10 @@
 There is one plugin, plugins/ojalgo, and its Claude manifest (.claude-plugin/plugin.json) is the source for name,
 description, author, licence and links. Nothing in it is copied by hand: this script generates the Codex manifest
 (.codex-plugin/plugin.json) inside the zip. The only text kept for OpenAI alone is codex/listing.json, which holds
-what their listing asks for and Claude's does not (a 30-character subtitle, category, capabilities, starter prompts).
+what their listing asks for and Claude's does not (a 30-character subtitle, category, capability labels, support and privacy links, starter prompts).
 
 OpenAI requires an explicit version; Claude's manifest has none on purpose. The version is derived: 1.0.<number of
-commits that touched plugins/ojalgo>. It goes up by itself whenever the plugin changes, and not otherwise.
+commits that touched plugins/ojalgo or codex>. It goes up by itself whenever the package changes, and not otherwise.
 
 The zip is uploaded by hand at https://platform.openai.com/plugins ("Upload new or existing plugin").
 """
@@ -25,12 +25,12 @@ plugin = root / "plugins" / "ojalgo"
 claude = json.loads((plugin / ".claude-plugin" / "plugin.json").read_text(encoding="utf-8"))
 listing = json.loads((root / "codex" / "listing.json").read_text(encoding="utf-8"))
 
-count = subprocess.run(["git", "rev-list", "--count", "HEAD", "--", "plugins/ojalgo"], cwd=root, capture_output=True, text=True, check=True).stdout.strip()
+count = subprocess.run(["git", "rev-list", "--count", "HEAD", "--", "plugins/ojalgo", "codex"], cwd=root, capture_output=True, text=True, check=True).stdout.strip()
 version = "1.0." + count
 
-dirty = subprocess.run(["git", "status", "--porcelain", "--", "plugins/ojalgo"], cwd=root, capture_output=True, text=True, check=True).stdout.strip()
+dirty = subprocess.run(["git", "status", "--porcelain", "--", "plugins/ojalgo", "codex"], cwd=root, capture_output=True, text=True, check=True).stdout.strip()
 if dirty:
-    sys.exit("plugins/ojalgo has uncommitted changes. Commit first: the version number is counted from the commits.\n" + dirty)
+    sys.exit("plugins/ojalgo or codex has uncommitted changes. Commit first: the version number is counted from the commits.\n" + dirty)
 
 # The long description is put together from the skills themselves.
 skills = []
@@ -62,6 +62,8 @@ manifest = {
         "category": listing["category"],
         "capabilities": listing["capabilities"],
         "websiteURL": listing["websiteURL"],
+        "supportURL": listing["supportURL"],
+        "privacyPolicyURL": listing["privacyPolicyURL"],
         "defaultPrompt": listing["defaultPrompt"],
         "composerIcon": "./assets/icon.png",
         "logo": "./assets/icon.png",
@@ -86,6 +88,12 @@ if len(prompts) > 3 or len(set(prompts)) != len(prompts):
 for prompt in prompts:
     if len(prompt) > 128:
         problems.append(f"starter prompt is {len(prompt)} characters, the limit is 128: {prompt}")
+capabilities = interface["capabilities"]
+if len(capabilities) > 20 or any(len(c) > 120 for c in capabilities):
+    problems.append("at most 20 capabilities, each at most 120 characters")
+for field in ("websiteURL", "supportURL", "privacyPolicyURL"):
+    if not interface[field].startswith("https://"):
+        problems.append(f"{field} must be an https:// address")
 if problems:
     sys.exit("Not packaged:\n- " + "\n- ".join(problems))
 
