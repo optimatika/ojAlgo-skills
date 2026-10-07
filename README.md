@@ -32,7 +32,7 @@ With the first one, an assistant that is asked to allocate, assign, schedule, pa
 
 ## Tested
 
-The code in the three service skills is run against a live server by [`tests/run.sh`](tests/run.sh), which extracts it from the skill files each time.
+The code in the three service skills is run against a live server by [`tests/run.sh`](tests/run.sh), which extracts it from the skill files each time. The same script checks that the latest ojAlgo release still behaves the way the rules in the `ojalgo-optimisation` skill say it does ([`tests/RuleChecks.java`](tests/RuleChecks.java)).
 
 ## Links
 

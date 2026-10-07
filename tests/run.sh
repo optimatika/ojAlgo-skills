@@ -8,6 +8,11 @@
 # The code is extracted from the SKILL.md files each time, so what runs here is
 # what is published. Needs curl, jq, python3 and Maven.
 #
+# It also runs RuleChecks.java, which checks that the latest ojAlgo release still
+# behaves the way the rules in the skill, the cookbook and ojAlgo/context7.json
+# say. If a release changes one of those behaviours, that step fails and names
+# the texts to update.
+#
 # Expected: the chairs-and-tables model maximises to 2200 (24 chairs, 14 tables).
 # The curl and file examples minimise the same model, so they report 0.
 
@@ -21,6 +26,7 @@ trap 'rm -rf "${WORK}"' EXIT
 
 python3 extract.py "${WORK}" "${HOST}" || exit 1
 cp model.lp model.mps pom.xml "${WORK}/"
+cp RuleChecks.java "${WORK}/src/main/java/"
 cd "${WORK}"
 
 echo "==> Server: ${HOST}"
@@ -35,6 +41,10 @@ python3 -m venv venv >/dev/null && ./venv/bin/pip install -q requests && ./venv/
 echo "==> Compiling the Java examples"
 mvn -q -B compile dependency:build-classpath -Dmdep.outputFile=cp.txt || { echo "COMPILE FAILED"; exit 1; }
 CP="target/classes:$(cat cp.txt)"; echo
+
+echo "==> Rules (does the latest ojAlgo release still behave as the rules say? needs no server)"
+java -cp "${CP}" RuleChecks || exit 1
+echo
 
 echo "==> 3/4 Client skill (expect model: value 2200, chairs 24, tables 14, rush 0; file: value 0, it is minimised)"
 java -cp "${CP}" ClientSkill; echo
