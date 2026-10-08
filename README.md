@@ -1,10 +1,12 @@
 # ojAlgo skills for coding agents
 
-[Agent Skills](https://agentskills.io) that teach AI coding assistants to work with [ojAlgo](https://www.ojalgo.org/), the pure-Java, zero-dependency library for LP, QP and MIP, and with Optimatika's [Optimisation Service](https://www.optimatika.se/optimisation-service/).
+[Agent Skills](https://agentskills.io) that teach AI coding assistants to work with [ojAlgo](https://www.ojalgo.org/), the pure-Java, zero-dependency library for optimisation (LP, QP, MIP) and linear algebra, and with Optimatika's [Optimisation Service](https://www.optimatika.se/optimisation-service/).
 
 | Skill | What it teaches |
 |---|---|
 | [`ojalgo-optimisation`](plugins/ojalgo/skills/ojalgo-optimisation/SKILL.md) | Writing and debugging optimisation models with ojAlgo |
+| [`ojalgo-linear-algebra`](plugins/ojalgo/skills/ojalgo-linear-algebra/SKILL.md) | Equation systems, least squares, matrix decompositions (LU, QR, Cholesky, SVD, eigenvalues), sparse systems, and memory-efficient matrix code with ojAlgo |
+| [`ojalgo-portfolio`](plugins/ojalgo/skills/ojalgo-portfolio/SKILL.md) | Portfolio optimisation: Markowitz mean-variance, Black-Litterman, covariance matrices from price histories, Sharpe ratio and value at risk |
 | [`optimisation-service-rest`](plugins/ojalgo/skills/optimisation-service-rest/SKILL.md) | Level 1: solving models over the service's REST API, from any language |
 | [`optimisation-service-client`](plugins/ojalgo/skills/optimisation-service-client/SKILL.md) | Levels 2 and 3: the Java client library, from any JVM language. Submit model files, or build models with its own modeller (no ojAlgo needed, older Java versions supported) |
 | [`optimisation-service-ojalgo`](plugins/ojalgo/skills/optimisation-service-ojalgo/SKILL.md) | Level 3: solving existing ojAlgo models remotely, with no changes to the model code |
@@ -32,7 +34,7 @@ With the first one, an assistant that is asked to allocate, assign, schedule, pa
 
 ## Tested
 
-The code in the three service skills is run against a live server by [`tests/run.sh`](tests/run.sh), which extracts it from the skill files each time. The same script checks that the latest ojAlgo release still behaves the way the rules in the `ojalgo-optimisation` skill say it does ([`tests/RuleChecks.java`](tests/RuleChecks.java)).
+The code in the skills is extracted from the skill files and run by [`tests/run.sh`](tests/run.sh) each time: the three service skills against a live server, the linear algebra and portfolio skills locally. The same script checks that the latest ojAlgo release still behaves the way the rules in the skills say it does ([`tests/RuleChecks.java`](tests/RuleChecks.java)).
 
 ## Links
 

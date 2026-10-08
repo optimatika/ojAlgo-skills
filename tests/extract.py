@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Turns the code blocks in the service skills into runnable files, so that what is tested is what is published."""
+"""Turns the code blocks in the skills into runnable files, so that what is tested is what is published."""
 import pathlib
 import re
 import sys
@@ -50,6 +50,19 @@ java_class("CompareOptModel", [comparison[0]], [
 
 java_class("CompareExpressionsBasedModel", [comparison[1]], [
     'System.out.println("ExpressionsBasedModel: " + result + " chairs=" + chairs.getValue() + " tables=" + tables.getValue());',
+])
+
+java_class("LinearAlgebraSkill", blocks("ojalgo-linear-algebra", "java"), [
+    'System.out.println("x=" + x.toRawCopy1D()[0] + " det=" + determinant + " rank=" + rank + " residual=" + residual);',
+    'System.out.println("lu=" + solution.doubleValue(0) + " least squares=" + fitted.doubleValue(0) + "," + fitted.doubleValue(1) + " svd rank=" + numericalRank + " eigenvalues=" + eigenvalues.doubleValue(0, 0) + "," + eigenvalues.doubleValue(1, 1) + "," + eigenvalues.doubleValue(2, 2));',
+    'System.out.println("cg residual=" + sparse.multiply(iterative).subtract(sparseRhs).norm() + " loop D[0,0]=" + matD.doubleValue(0, 0) + " qr rank=" + decompositionInLoop.getRank());',
+])
+
+java_class("PortfolioSkill", blocks("ojalgo-portfolio", "java"), [
+    'System.out.println("covariance from prices: " + estimatedCovariances.countRows() + "x" + estimatedCovariances.countColumns() + ", first variance " + estimatedCovariances.doubleValue(0, 0));',
+    'System.out.println("markowitz " + weights + " return=" + expectedReturn + " volatility=" + volatility + " sharpe=" + sharpe + " VaR95=" + valueAtRisk);',
+    'System.out.println("implied " + impliedReturns.doubleValue(0) + "," + impliedReturns.doubleValue(1) + "," + impliedReturns.doubleValue(2) + " posterior " + posteriorReturns.doubleValue(0) + "," + posteriorReturns.doubleValue(1) + "," + posteriorReturns.doubleValue(2));',
+    'System.out.println("black-litterman " + blackLittermanWeights + " constrained " + constrainedWeights + " " + constrained.optimiser().getState());',
 ])
 
 java_class("OjAlgoSkill", blocks("optimisation-service-ojalgo", "java"), [

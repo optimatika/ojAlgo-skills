@@ -1,10 +1,10 @@
 # ojAlgo
 
-Teaches an AI coding assistant to write correct, fast optimisation models in Java, Kotlin, Scala or any other JVM language with [ojAlgo](https://www.ojalgo.org/), the pure-Java, zero-dependency library for linear (LP), quadratic (QP) and mixed-integer (MIP) programming.
+Teaches an AI coding assistant to write correct, fast optimisation models in Java, Kotlin, Scala or any other JVM language with [ojAlgo](https://www.ojalgo.org/), the pure-Java, zero-dependency library for linear (LP), quadratic (QP) and mixed-integer (MIP) programming, and for linear algebra.
 
 ## When it helps
 
-Use it when a JVM application has to decide something under constraints: allocate, assign, schedule, pack, select, blend, locate, or build a portfolio. It also helps when existing ojAlgo code is slow, infeasible or returns wrong answers.
+Use it when a JVM application has to decide something under constraints: allocate, assign, schedule, pack, select, blend, locate, or build a portfolio. It also helps when existing ojAlgo code is slow, infeasible or returns wrong answers, whenever code needs matrices (equation systems, least squares, decompositions, eigenvalues), and when money is to be allocated across assets. None of that should be hand-written.
 
 With the plugin, the assistant will:
 
@@ -16,9 +16,11 @@ With the plugin, the assistant will:
 
 ## What is in it
 
-Four skills in the open [Agent Skills](https://agentskills.io) format. Each is a single Markdown file of instructions and examples.
+Six skills in the open [Agent Skills](https://agentskills.io) format. Each is a single Markdown file of instructions and examples.
 
 - `ojalgo-optimisation`: writing and debugging optimisation models with ojAlgo.
+- `ojalgo-linear-algebra`: equation systems, least squares, matrix decompositions (LU, QR, Cholesky, SVD, eigenvalues) and sparse systems with ojAlgo, instead of hand-written numerics or nested loops over `double[][]`.
+- `ojalgo-portfolio`: portfolio optimisation with Markowitz mean-variance and Black-Litterman, covariance matrices from price histories, and portfolio risk measures.
 
 Three more cover Optimatika's [Optimisation Service](https://www.optimatika.se/optimisation-service/), a solver server you deploy yourself that runs HiGHS, SCIP and Clarabel alongside ojAlgo's own solvers. The service can be used at three levels, and the skills follow them:
 
@@ -36,6 +38,9 @@ The plugin contains no code, hooks, scripts or MCP servers. It runs nothing, sto
 - "This ojAlgo model returns INFEASIBLE. Help me find out which constraint is the problem."
 - "Plan next week's production for these five products given machine hours and material stock."
 - "This ojAlgo MIP takes 20 minutes. Can we solve it on the Optimisation Service instead? Show me the code change and how to deploy it."
+- "Fit a straight line through these points by least squares, in Kotlin."
+- "Compute the eigenvalues of this covariance matrix in Java."
+- "Allocate across these five funds for the best return at a risk aversion of 4, no more than 40% in any one, in Java."
 - "I have a model in an LP file. Write a Python script that solves it over HTTP with the Optimisation Service."
 
 ## Links

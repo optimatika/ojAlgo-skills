@@ -1,6 +1,6 @@
 {
   "name": "ojalgo",
-  "description": "Agent skills for ojAlgo, the pure-Java mathematical optimisation library.",
+  "description": "Agent skills for ojAlgo, the pure-Java library for mathematical optimisation and linear algebra.",
   "owner": {
     "name": "Optimatika AB",
     "url": "https://www.optimatika.se/"
@@ -9,7 +9,7 @@
     {
       "name": "ojalgo",
       "source": "./plugins/ojalgo",
-      "description": "Write correct, fast LP, QP and MIP models in Java, Kotlin, Scala or any other JVM language with ojAlgo."
+      "description": "Write correct, fast optimisation models (LP, QP, MIP), linear algebra (equation systems, least squares, decompositions) and portfolio optimisation (Markowitz, Black-Litterman) in Java, Kotlin, Scala or any other JVM language with ojAlgo."
     }
   ]
 }

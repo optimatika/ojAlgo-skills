@@ -40,8 +40,8 @@ for skill in sorted((plugin / "skills").iterdir()):
     name = re.search(r"^name:\s*(.+)$", front, re.M).group(1).strip()
     description = re.search(r"^description:\s*(.+)$", front, re.M).group(1).strip()
     skills.append((name, description.split(". Use when")[0].rstrip(".") + "."))
-order = ["ojalgo-optimisation"]
-skills.sort(key=lambda s: (s[0] not in order, s[0]))
+order = ["ojalgo-optimisation", "ojalgo-linear-algebra", "ojalgo-portfolio"]
+skills.sort(key=lambda s: (order.index(s[0]) if s[0] in order else len(order), s[0]))
 long_description = claude["description"] + "\n\nSkills:\n" + "\n".join("- " + name + ": " + text for name, text in skills)
 
 manifest = {

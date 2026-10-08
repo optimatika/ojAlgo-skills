@@ -67,7 +67,7 @@ variance.set(w[i], w[j], covariance[i][j]);   // for all i, j; covariance must b
 
 1. Check `result.getState()` before using any value. `isOptimal()` = proven optimum. `isFeasible()` = valid solution (accept it when limits are set). After `INFEASIBLE` or `UNBOUNDED`, `variable.getValue()` returns `null` — reading it without the check is a NullPointerException.
 2. Read integer/binary values by rounding: `> 0.5` for binaries, `Math.round(...)` for counts.
-3. Give every variable and expression a unique, meaningful name. `newExpression` with a name that already exists replaces the earlier one.
+3. Give every variable and expression a unique, meaningful name. `newExpression` with a name that is already in use throws `IllegalArgumentException`. Build names from the loop indices (`"Capacity " + i`).
 4. Percentages and ratios are linear rows against a total ("≥ 18% protein" → `sum(protein_i * kg_i) >= 0.18 * batchKg`), never a division.
 5. Link yes/no decisions through the row that already limits the quantity (`sum(size_i * x_ib) - capacity * open_b <= 0`) and add per-pair links (`x_ij - open_i <= 0`) when cheap. Avoid large arbitrary big-M constants; they make MIPs slow and numerically fragile.
 6. Break symmetry between interchangeable resources (`used[b+1] - used[b] <= 0`).
@@ -85,7 +85,7 @@ Much older ojAlgo code is still in circulation. These do not compile with curren
 - `PrimitiveMatrix`, `Primitive64Matrix` → `MatrixR064`. `PrimitiveDenseStore`, `Primitive64Store` → `R064Store`. `Primitive64Array` → `ArrayR064`.
 - Packages: `org.ojalgo.constant` → `org.ojalgo.function.constant`; `org.ojalgo.access` → `org.ojalgo.structure`; `org.ojalgo.finance` → `org.ojalgo.data.domain.finance`.
 
-Use the latest version from Maven Central (`org.ojalgo:ojalgo`, 57 or later), not a version number recalled from memory. Full list: https://www.ojalgo.org/updating-old-code/
+Use the latest version from Maven Central (`org.ojalgo:ojalgo`, 57.4.0 or later), not a version number recalled from memory. Full list: https://www.ojalgo.org/updating-old-code/
 
 ## Production settings
 

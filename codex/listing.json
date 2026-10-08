@@ -1,9 +1,11 @@
 {
-  "shortDescription": "LP, QP and MIP on the JVM",
+  "shortDescription": "Optimisation & linear algebra",
   "category": "Developer Tools",
   "capabilities": [
     "Write optimisation models with ojAlgo",
     "Debug infeasible or slow models",
+    "Solve equation systems and decompose matrices",
+    "Optimise portfolios (Markowitz, Black-Litterman)",
     "Solve models on the Optimisation Service"
   ],
   "websiteURL": "https://www.ojalgo.org/",

@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 #
-# Runs the code in the three Optimisation Service skills against a live server.
+# Runs the code in the skills: the three Optimisation Service skills against a live
+# server, and the linear algebra skill locally.
 #
 #   ./tests/run.sh                 the public test server
 #   HOST=https://... ./tests/run.sh   any other instance
@@ -43,8 +44,14 @@ mvn -q -B compile dependency:build-classpath -Dmdep.outputFile=cp.txt || { echo 
 CP="target/classes:$(cat cp.txt)"; echo
 
 echo "==> Rules (does the latest ojAlgo release still behave as the rules say? needs no server)"
-java -cp "${CP}" RuleChecks || exit 1
+java -cp "${CP}" RuleChecks || RULES_CHANGED=1
 echo
+
+echo "==> Linear algebra skill (expect x=0.222.. det=18 rank=3, least squares 3.5,1.4, svd rank 2, eigenvalues 4.73,3,1.27 in some order, small residuals)"
+java -cp "${CP}" LinearAlgebraSkill; echo
+
+echo "==> Portfolio skill (expect markowitz ~{0.41, 0.25, 0.34}, implied 0.0678,0.0213,0.01095, black-litterman ~{0.515, 0.385, 0.1}, constrained equity at most 0.5)"
+java -cp "${CP}" PortfolioSkill; echo
 
 echo "==> 3/4 Client skill (expect model: value 2200, chairs 24, tables 14, rush 0; file: value 0, it is minimised)"
 java -cp "${CP}" ClientSkill; echo
@@ -55,3 +62,9 @@ java -cp "${CP}" OjAlgoSkill; echo
 echo "==> Modeller comparison (expect value 2200, chairs 24, tables 14, from both)"
 java -cp "${CP}" CompareOptModel
 java -cp "${CP}" CompareExpressionsBasedModel
+
+if [ "${RULES_CHANGED:-0}" = 1 ]; then
+  echo
+  echo "==> The Rules step reported CHANGED behaviour (see above). The other steps ran anyway."
+  exit 1
+fi
