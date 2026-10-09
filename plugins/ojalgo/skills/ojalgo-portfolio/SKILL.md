@@ -40,13 +40,15 @@ import org.ojalgo.series.CalendarDateSeries;
 import org.ojalgo.type.CalendarDateUnit;
 
 String[] assetNames = { "Equity", "Bonds", "Gold" };
-double[][] weeklyPrices = { { 100, 101, 103, 102, 105, 107, 106, 109 }, { 50, 50.5, 50.2, 51, 51.5, 51.2, 52, 52.4 }, { 20, 20.4, 20.1, 21, 21.6, 21.2, 22, 22.9 } };
+double[] equityPrices = { 100, 101, 103, 102, 105, 107, 106, 109 };   // weekly closing prices
+double[] bondPrices = { 50, 50.5, 50.2, 51, 51.5, 51.2, 52, 52.4 };
+double[] goldPrices = { 20, 20.4, 20.1, 21, 21.6, 21.2, 22, 22.9 };
 Date firstDate = new Date(1_700_000_000_000L);
 
-List<CalendarDateSeries<BigDecimal>> priceSeries = new ArrayList<>();
-for (int i = 0; i < assetNames.length; i++) {
-    priceSeries.add(FinanceUtils.makeDatePriceSeries(weeklyPrices[i], firstDate, CalendarDateUnit.WEEK).name(assetNames[i]));   // each series needs a name
-}
+List<CalendarDateSeries<BigDecimal>> priceSeries = new ArrayList<>();   // each series needs a name
+priceSeries.add(FinanceUtils.makeDatePriceSeries(equityPrices, firstDate, CalendarDateUnit.WEEK).name(assetNames[0]));
+priceSeries.add(FinanceUtils.makeDatePriceSeries(bondPrices, firstDate, CalendarDateUnit.WEEK).name(assetNames[1]));
+priceSeries.add(FinanceUtils.makeDatePriceSeries(goldPrices, firstDate, CalendarDateUnit.WEEK).name(assetNames[2]));
 MatrixR064 estimatedCovariances = FinanceUtils.makeCovarianceMatrix(priceSeries);   // annualised
 ```
 
@@ -56,14 +58,24 @@ MatrixR064 estimatedCovariances = FinanceUtils.makeCovarianceMatrix(priceSeries)
 
 ```java
 import org.ojalgo.data.domain.finance.portfolio.MarkowitzModel;
+import org.ojalgo.matrix.store.MatrixStore;
+import org.ojalgo.matrix.store.PhysicalStore;
+import org.ojalgo.matrix.store.R064Store;
 
-MatrixR064 covariances = MatrixR064.FACTORY.rows(new double[][] {
-        { 0.0400, 0.0060, 0.0020 },
-        { 0.0060, 0.0100, 0.0010 },
-        { 0.0020, 0.0010, 0.0225 } });
+// Covariances from annual volatilities and correlations
+MatrixStore<Double> volatilities = R064Store.FACTORY.column(0.20, 0.10, 0.15);
+PhysicalStore<Double> correlations = R064Store.FACTORY.make(3, 3);
+correlations.fillDiagonal(1.0);
+correlations.set(0, 1, 0.30);
+correlations.set(1, 0, 0.30);   // Equity and Bonds
+correlations.set(0, 2, 0.10);
+correlations.set(2, 0, 0.10);   // Equity and Gold
+correlations.set(1, 2, 0.10);
+correlations.set(2, 1, 0.10);   // Bonds and Gold
+MatrixR064 covariances = FinanceUtils.toCovariances(volatilities, correlations);
 MatrixR064 excessReturns = MatrixR064.FACTORY.column(0.06, 0.02, 0.03);
 
-MarkowitzModel markowitz = new MarkowitzModel(covariances, excessReturns);
+MarkowitzModel markowitz = MarkowitzModel.of(covariances, excessReturns);
 markowitz.setRiskAversion(3.0);                          // or setTargetReturn(...) or setTargetVariance(...)
 markowitz.setUpperLimit(0, new BigDecimal("0.60"));      // at most 60% in asset 0
 // markowitz.setShortingAllowed(true);                   // long-only is the default
@@ -96,11 +108,11 @@ import java.util.Arrays;
 import org.ojalgo.data.domain.finance.portfolio.BlackLittermanModel;
 import org.ojalgo.data.domain.finance.portfolio.MarketEquilibrium;
 
-MarketEquilibrium market = new MarketEquilibrium(assetNames, covariances, 3.0);   // covariances and risk aversion
+MarketEquilibrium market = MarketEquilibrium.of(assetNames, covariances, 3.0);   // covariances and risk aversion
 MatrixR064 marketWeights = MatrixR064.FACTORY.column(0.5, 0.4, 0.1);             // market capitalisation weights
 MatrixR064 impliedReturns = market.calculateAssetReturns(marketWeights);
 
-BlackLittermanModel blackLitterman = new BlackLittermanModel(market, marketWeights);
+BlackLittermanModel blackLitterman = BlackLittermanModel.of(market, marketWeights);
 blackLitterman.setConfidence(BigDecimal.ONE);
 // View: Equity will outperform Bonds by 5%. The weights describe a view portfolio (here long one, short the other).
 blackLitterman.addViewWithBalancedConfidence(Arrays.asList(BigDecimal.ONE, BigDecimal.ONE.negate(), BigDecimal.ZERO), new BigDecimal("0.05"));
@@ -109,7 +121,7 @@ MatrixR064 posteriorReturns = blackLitterman.getAssetReturns();   // equilibrium
 List<BigDecimal> blackLittermanWeights = blackLitterman.getWeights();
 
 // The posterior returns can go into a Markowitz model to add limits
-MarkowitzModel constrained = new MarkowitzModel(market, posteriorReturns);
+MarkowitzModel constrained = MarkowitzModel.of(market, posteriorReturns);
 constrained.setUpperLimit(0, new BigDecimal("0.50"));
 List<BigDecimal> constrainedWeights = constrained.getWeights();
 ```
@@ -129,7 +141,8 @@ List<BigDecimal> constrainedWeights = constrained.getWeights();
 
 - The separate `ojAlgo-finance` artifact was discontinued; everything is in the main `org.ojalgo:ojalgo` artifact since version 51.
 - Package `org.ojalgo.finance` → `org.ojalgo.data.domain.finance`; `org.ojalgo.finance.portfolio` → `org.ojalgo.data.domain.finance.portfolio`.
-- `PrimitiveMatrix` → `MatrixR064` in all the constructors above.
+- `PrimitiveMatrix` → `MatrixR064`.
+- The `MarkowitzModel`, `MarketEquilibrium` and `BlackLittermanModel` constructors are deprecated since v57; use the static `of(...)` factories, as above.
 
 Use the latest version from Maven Central (`org.ojalgo:ojalgo`, 57.4.0 or later). Full list of renames: https://www.ojalgo.org/updating-old-code/
 

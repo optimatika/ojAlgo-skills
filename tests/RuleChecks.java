@@ -11,7 +11,9 @@ import org.ojalgo.matrix.decomposition.Eigenvalue;
 import org.ojalgo.matrix.decomposition.LU;
 import org.ojalgo.matrix.decomposition.QR;
 import org.ojalgo.matrix.decomposition.SingularValue;
+import org.ojalgo.matrix.store.MatrixStore;
 import org.ojalgo.matrix.store.R064Store;
+import org.ojalgo.matrix.store.RawStore;
 import org.ojalgo.optimisation.Expression;
 import org.ojalgo.optimisation.ExpressionsBasedModel;
 import org.ojalgo.optimisation.Optimisation;
@@ -137,7 +139,7 @@ public class RuleChecks {
         check("The old package org.ojalgo.finance.portfolio does not exist", finance + " (\"Names that no longer exist\")",
                 () -> !RuleChecks.exists("org.ojalgo.finance.portfolio.MarkowitzModel"));
         check("MarkowitzModel is long-only by default, and its weights sum to 1", finance + " (Markowitz section)", () -> {
-            MarkowitzModel markowitz = new MarkowitzModel(MatrixR064.FACTORY.rows(new double[][] { { 0.04, 0.006 }, { 0.006, 0.01 } }), MatrixR064.FACTORY.column(0.06, -0.02));
+            MarkowitzModel markowitz = MarkowitzModel.of(RawStore.wrap(new double[][] { { 0.04, 0.006 }, { 0.006, 0.01 } }), MatrixR064.FACTORY.column(0.06, -0.02));
             markowitz.setRiskAversion(3.0);
             double sum = 0.0;
             boolean nonNegative = true;
@@ -149,7 +151,7 @@ public class RuleChecks {
         });
 
         check("LU on a singular matrix: decompose(..) returns true and isSolvable() false", "the ojalgo-linear-algebra skill (the decomposition pattern, rule 2)", () -> {
-            R064Store singular = R064Store.FACTORY.rows(new double[][] { { 1, 2 }, { 2, 4 } });
+            MatrixStore<Double> singular = RawStore.wrap(new double[][] { { 1, 2 }, { 2, 4 } });
             LU<Double> lu = LU.R064.make(singular);
             return lu.decompose(singular) && !lu.isSolvable();
         });
@@ -193,7 +195,7 @@ public class RuleChecks {
 
         SingularValue<Double> svd = SingularValue.R064.make(2, 2);
         Eigenvalue<Double> evd = Eigenvalue.R064.make(2, true);
-        R064Store square = R064Store.FACTORY.rows(new double[][] { { 2, 1 }, { 1, 2 } });
+        MatrixStore<Double> square = RawStore.wrap(new double[][] { { 2, 1 }, { 1, 2 } });
         svd.decompose(square.limits(-1, 2));
         evd.decompose(square);
         if (svd.getU() == null || svd.getS() == null || svd.getV() == null || evd.getD() == null || evd.getV() == null || svd.getRank() < 0) {
@@ -226,7 +228,7 @@ public class RuleChecks {
             }
         }
         elements[size - 1] = elements[0].clone();
-        MatrixR064 matrix = MatrixR064.FACTORY.rows(elements);
+        MatrixR064 matrix = MatrixR064.FACTORY.copy(RawStore.wrap(elements));
         double[] ones = new double[size];
         java.util.Arrays.fill(ones, 1.0);
         MatrixR064 rhs = matrix.multiply(MatrixR064.FACTORY.column(ones));

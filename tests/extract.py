@@ -53,7 +53,7 @@ java_class("CompareExpressionsBasedModel", [comparison[1]], [
 ])
 
 java_class("LinearAlgebraSkill", blocks("ojalgo-linear-algebra", "java"), [
-    'System.out.println("x=" + x.toRawCopy1D()[0] + " det=" + determinant + " rank=" + rank + " residual=" + residual);',
+    'System.out.println("x=" + solution.doubleValue(0) + " det=" + determinant + " residual=" + residual);',
     'System.out.println("lu=" + solution.doubleValue(0) + " least squares=" + fitted.doubleValue(0) + "," + fitted.doubleValue(1) + " svd rank=" + numericalRank + " eigenvalues=" + eigenvalues.doubleValue(0, 0) + "," + eigenvalues.doubleValue(1, 1) + "," + eigenvalues.doubleValue(2, 2));',
     'System.out.println("cg residual=" + sparse.multiply(iterative).subtract(sparseRhs).norm() + " loop D[0,0]=" + matD.doubleValue(0, 0) + " qr rank=" + decompositionInLoop.getRank());',
 ])

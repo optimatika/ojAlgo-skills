@@ -47,10 +47,10 @@ echo "==> Rules (does the latest ojAlgo release still behave as the rules say? n
 java -cp "${CP}" RuleChecks || RULES_CHANGED=1
 echo
 
-echo "==> Linear algebra skill (expect x=0.222.. det=18 rank=3, least squares 3.5,1.4, svd rank 2, eigenvalues 4.73,3,1.27 in some order, small residuals)"
+echo "==> Linear algebra skill (expect x=0.1786 det=56, least squares 3.5,1.4, svd rank 2, eigenvalues 5.41,4,2.59 in some order, small residuals)"
 java -cp "${CP}" LinearAlgebraSkill; echo
 
-echo "==> Portfolio skill (expect markowitz ~{0.41, 0.25, 0.34}, implied 0.0678,0.0213,0.01095, black-litterman ~{0.515, 0.385, 0.1}, constrained equity at most 0.5)"
+echo "==> Portfolio skill (expect markowitz ~{0.41, 0.27, 0.32}, implied 0.0681,0.02145,0.01305, black-litterman ~{0.515, 0.385, 0.1}, constrained equity at most 0.5)"
 java -cp "${CP}" PortfolioSkill; echo
 
 echo "==> 3/4 Client skill (expect model: value 2200, chairs 24, tables 14, rush 0; file: value 0, it is minimised)"
