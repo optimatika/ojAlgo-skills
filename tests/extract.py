@@ -53,8 +53,8 @@ java_class("CompareExpressionsBasedModel", [comparison[1]], [
 ])
 
 java_class("LinearAlgebraSkill", blocks("ojalgo-linear-algebra", "java"), [
-    'System.out.println("x=" + solution.doubleValue(0) + " det=" + determinant + " residual=" + residual);',
-    'System.out.println("lu=" + solution.doubleValue(0) + " least squares=" + fitted.doubleValue(0) + "," + fitted.doubleValue(1) + " svd rank=" + numericalRank + " eigenvalues=" + eigenvalues.doubleValue(0, 0) + "," + eigenvalues.doubleValue(1, 1) + "," + eigenvalues.doubleValue(2, 2));',
+    'System.out.println("matrix x=" + x.doubleValue(0) + "," + x.doubleValue(1) + "," + x.doubleValue(2) + " residual=" + residual + " det=" + determinant + " rank=" + rank + " condition=" + condition + " eigenvalues=" + eigenpairs.get(0).value.doubleValue() + "," + eigenpairs.get(1).value.doubleValue() + "," + eigenpairs.get(2).value.doubleValue() + " least squares=" + fitted.doubleValue(0) + "," + fitted.doubleValue(1) + " exact inverse(0,0)=" + exactInverse.get(0, 0));',
+    'System.out.println("stores x=" + solution.doubleValue(0) + " det=" + luDeterminant + " qr least squares=" + checkedFit.doubleValue(0) + "," + checkedFit.doubleValue(1) + " svd rank=" + numericalRank + " eigenvalues=" + eigenvalues.doubleValue(0, 0) + "," + eigenvalues.doubleValue(1, 1) + "," + eigenvalues.doubleValue(2, 2));',
     'System.out.println("cg residual=" + sparse.multiply(iterative).subtract(sparseRhs).norm() + " loop D[0,0]=" + matD.doubleValue(0, 0) + " qr rank=" + decompositionInLoop.getRank());',
 ])
 

@@ -131,7 +131,7 @@ public class RuleChecks {
                 // Fixed in 57.4.0 – before that NaN, Infinity or wrong values, as the skill says
                 RuleChecks.pending(claim, "57.4.0");
             } else {
-                check(claim, "the ojalgo-linear-algebra skill (\"The simple way\" and rule 2)", () -> RuleChecks.singularGivesPseudoinverse(size));
+                check(claim, "the ojalgo-linear-algebra skill (\"Start with MatrixR064\" and rule 2)", () -> RuleChecks.singularGivesPseudoinverse(size));
             }
         }
 
@@ -150,7 +150,7 @@ public class RuleChecks {
             return !markowitz.isShortingAllowed() && nonNegative && Math.abs(sum - 1.0) < 1e-5 && markowitz.optimiser().getState().isOptimal(); // the weights are rounded to 6 decimals
         });
 
-        check("LU on a singular matrix: decompose(..) returns true and isSolvable() false", "the ojalgo-linear-algebra skill (the decomposition pattern, rule 2)", () -> {
+        check("LU on a singular matrix: decompose(..) returns true and isSolvable() false", "the ojalgo-linear-algebra skill (\"When you need control: stores and decompositions\", rule 2)", () -> {
             MatrixStore<Double> singular = RawStore.wrap(new double[][] { { 1, 2 }, { 2, 4 } });
             LU<Double> lu = LU.R064.make(singular);
             return lu.decompose(singular) && !lu.isSolvable();
