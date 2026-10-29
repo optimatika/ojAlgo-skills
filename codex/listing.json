@@ -11,6 +11,7 @@
   "websiteURL": "https://www.ojalgo.org/",
   "supportURL": "https://www.ojalgo.org/support-community/",
   "privacyPolicyURL": "https://www.optimatika.se/privacy-policy/",
+  "termsOfServiceURL": "https://github.com/optimatika/ojAlgo-skills/blob/master/LICENSE",
   "defaultPrompt": [
     "Assign 40 orders to 6 trucks with weight limits, using as few trucks as possible. Java, with ojAlgo.",
     "This ojAlgo model returns INFEASIBLE. Help me find which constraint is the problem.",

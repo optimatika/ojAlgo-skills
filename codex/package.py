@@ -6,7 +6,7 @@
 There is one plugin, plugins/ojalgo, and its Claude manifest (.claude-plugin/plugin.json) is the source for name,
 description, author, licence and links. Nothing in it is copied by hand: this script generates the Codex manifest
 (.codex-plugin/plugin.json) inside the zip. The only text kept for OpenAI alone is codex/listing.json, which holds
-what their listing asks for and Claude's does not (a 30-character subtitle, category, capability labels, support and privacy links, starter prompts).
+what their listing asks for and Claude's does not (a 30-character subtitle, category, capability labels, support, privacy and terms links, starter prompts).
 
 OpenAI requires an explicit version; Claude's manifest has none on purpose. The version is derived: 1.0.<number of
 commits that touched plugins/ojalgo or codex>. It goes up by itself whenever the package changes, and not otherwise.
@@ -64,6 +64,7 @@ manifest = {
         "websiteURL": listing["websiteURL"],
         "supportURL": listing["supportURL"],
         "privacyPolicyURL": listing["privacyPolicyURL"],
+        "termsOfServiceURL": listing["termsOfServiceURL"],
         "defaultPrompt": listing["defaultPrompt"],
         "composerIcon": "./assets/icon.png",
         "logo": "./assets/icon.png",
@@ -78,6 +79,10 @@ if not re.fullmatch(r"[a-z0-9]+(-[a-z0-9]+)*", manifest["name"]) or len(manifest
 for field, limit in (("displayName", 30), ("shortDescription", 30), ("longDescription", 4000), ("developerName", 80)):
     if len(interface[field]) > limit:
         problems.append(f"{field} is {len(interface[field])} characters, the limit is {limit}")
+categories = ("Productivity", "Creativity", "Developer Tools", "Business & Operations", "Data & Analytics", "Communication", "Education & Research",
+              "Security", "Finance", "Healthcare", "Travel", "Entertainment", "Other")
+if interface["category"] not in categories:
+    problems.append("category must be one of: " + ", ".join(categories))
 if len(manifest["description"]) > 4000:
     problems.append("description is over 4000 characters")
 if len(manifest["author"]["name"]) > 120:
@@ -91,9 +96,9 @@ for prompt in prompts:
 capabilities = interface["capabilities"]
 if len(capabilities) > 20 or any(len(c) > 120 for c in capabilities):
     problems.append("at most 20 capabilities, each at most 120 characters")
-for field in ("websiteURL", "supportURL", "privacyPolicyURL"):
-    if not interface[field].startswith("https://"):
-        problems.append(f"{field} must be an https:// address")
+for field in ("websiteURL", "supportURL", "privacyPolicyURL", "termsOfServiceURL"):
+    if not interface[field].startswith("https://") or len(interface[field]) > 1024:
+        problems.append(f"{field} must be an https:// address, at most 1024 characters")
 if problems:
     sys.exit("Not packaged:\n- " + "\n- ".join(problems))
 
