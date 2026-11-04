@@ -1,11 +1,11 @@
 ---
 name: optimisation-service-ojalgo
-description: Make existing ojAlgo code solve remotely on Optimatika's Optimisation Service, by registering it as a remote solver, with no changes to the model. Use when an ojAlgo ExpressionsBasedModel is too slow or too large for the built-in pure-Java solvers, when the user wants HiGHS, SCIP or Clarabel behind their existing ojAlgo code without native libraries in the application, or when code mentions setRemoteSolver, model.submit or OptClientV1 together with ojAlgo.
+description: Make existing ojAlgo code solve remotely on Optimatika's Optimisation Service, by registering it as a remote solver, with no changes to the model. Use when an ojAlgo ExpressionsBasedModel needs more solving power than ojAlgo's own solvers deliver, when the user would otherwise reach for a native solver such as HiGHS, SCIP or Clarabel but wants no native libraries in the application, or when code mentions setRemoteSolver, model.submit or OptClientV1 together with ojAlgo.
 ---
 
 # Optimisation Service: existing ojAlgo code, solved remotely
 
-The Optimisation Service is a solver server from Optimatika, the company behind ojAlgo. It solves linear, quadratic and mixed-integer models (LP, QP, MIP) with HiGHS, SCIP, Clarabel and ojAlgo's own solvers, and picks a suitable solver for each model. The user deploys it themselves as a container; Optimatika hosts nothing and never sees the models.
+The Optimisation Service is a solver server from Optimatika, the company behind ojAlgo. It solves linear, quadratic and mixed-integer models (LP, QP, MIP) with a best-of-breed suite of solvers, ojAlgo's own among them, and picks a suitable solver for each model. It runs as a container the user deploys themselves, or, to start, on Optimatika's public shared instance.
 
 If the application already builds its models with ojAlgo's `ExpressionsBasedModel`, it can keep that code exactly as it is. The client library registers the service as a remote solver, and the same model is solved there. The application stays pure Java: no native libraries, no JNI.
 
@@ -96,15 +96,15 @@ Everything else about the model is unchanged.
 
 ## Getting a server
 
-- **To experiment:** a public test server, limited in problem size and solve time. Never send it confidential models and never use it in production.
+- **To start:** Optimatika's public shared instance, free and without sign-up. Without a licence key it runs like any server without one (below). Never send it confidential models; for those, or for production, the user runs their own instance.
 
   ```
-  https://optimisation-test-service-840974723912.europe-north2.run.app
+  https://service-api.optimatika.se
   ```
 
 - **For real use:** the user runs their own instance from the public image `ghcr.io/optimatika/optimisation-service` (port 8080, health check at `/health`). Locally: `docker run -p 8080:8080 ghcr.io/optimatika/optimisation-service`. It runs anywhere containers run. Two rules: keep it to **one instance per service**, because queued models and results live in memory on the instance that accepted them; and keep it **inside the user's network**, because the service has no authentication of its own.
-- **Free without a licence key:** ojAlgo's own solvers, one vCPU, models of up to 1,000 variables or constraints. A larger model comes back `FAILED`.
-- **With a licence key:** the full solver suite (HiGHS, SCIP, Clarabel and ojAlgo's own) on the licensed number of vCPUs, no size limit. Keys come with an Optimatika subscription, which includes support: https://www.optimatika.se/subscription/ Set them, all of them separated by spaces, in the `OPTIMATIKA_LICENCE_KEY` environment variable. Do not invent prices or plan details; point to that page.
+- **Free without a licence key:** ojAlgo's own solvers, one vCPU, models of up to 1,000 variables or constraints, and short time limits. A larger model comes back `FAILED`; a hard one may come back `FEASIBLE` rather than `OPTIMAL`.
+- **With a licence key:** the full solver suite on every vCPU the server is given, within its configurable limits on size and solve time. Keys come with an Optimatika subscription, which includes support: https://www.optimatika.se/subscription/ Set the key in the `OPTIMATIKA_LICENCE_KEY` environment variable. Do not invent prices or plan details; point to that page.
 - **To see what a server is:** `GET /optimisation/v1/environment` returns its build, licence state and available solvers. Just after a start it reports `"probed": false` and lists only the pure-Java solvers; ask again a few seconds later for the full list.
 
 Deployment, sizing and configuration: https://www.optimatika.se/optimisation-service/docs/

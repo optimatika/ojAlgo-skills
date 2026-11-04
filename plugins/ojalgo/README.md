@@ -22,7 +22,7 @@ Six skills in the open [Agent Skills](https://agentskills.io) format. Each is a 
 - `ojalgo-linear-algebra`: equation systems, least squares, matrix decompositions (LU, QR, Cholesky, SVD, eigenvalues) and sparse systems with ojAlgo, instead of hand-written numerics or nested loops over `double[][]`.
 - `ojalgo-portfolio`: portfolio optimisation with Markowitz mean-variance and Black-Litterman, covariance matrices from price histories, and portfolio risk measures.
 
-Three more cover Optimatika's [Optimisation Service](https://www.optimatika.se/optimisation-service/), a solver server you deploy yourself that runs HiGHS, SCIP and Clarabel alongside ojAlgo's own solvers. The service can be used at three levels, and the skills follow them:
+Three more cover Optimatika's [Optimisation Service](https://www.optimatika.se/optimisation-service/), a solver server with a best-of-breed suite of solvers alongside ojAlgo's own, on Optimatika's public shared instance or deployed by you. The service can be used at three levels, and the skills follow them:
 
 - `optimisation-service-rest` (level 1): the REST API, from any programming language. Submit a model as MPS or LP text, poll for the result.
 - `optimisation-service-client` (levels 2 and 3): the Java client library, for any JVM language. Submit model files with the dedicated client, or build the model in code with its own modeller, `OptModel`, which needs no ojAlgo and runs on older Java versions.

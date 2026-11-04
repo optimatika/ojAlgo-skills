@@ -21,7 +21,7 @@ set -uo pipefail
 
 cd "$(dirname "$0")"
 
-HOST="${HOST:-https://optimisation-test-service-840974723912.europe-north2.run.app}"
+HOST="${HOST:-https://service-api.optimatika.se}"
 WORK="$(mktemp -d)"
 trap 'rm -rf "${WORK}"' EXIT
 
