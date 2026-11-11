@@ -33,7 +33,7 @@ def java_class(name, snippets, tail):
 (out / "rest.py").write_text(blocks("optimisation-service-rest", "python")[0].replace("https://your-service-host", host), encoding="utf-8")
 
 java_class("ClientSkill", blocks("optimisation-service-client", "java"), [
-    'System.out.println("model: optimal=" + result.isOptimal() + " value=" + result.getValue() + " chairs=" + chairs.doubleValue() + " tables=" + tables.doubleValue() + " rush=" + rush.doubleValue());',
+    'System.out.println("model: optimal=" + result.isOptimal() + " value=" + result.doubleValue() + " chairs=" + chairs.doubleValue() + " tables=" + tables.doubleValue() + " rush=" + rush.doubleValue());',
     'System.out.println("file:  optimal=" + fileResult.isOptimal() + " value=" + fileResult.getValue() + " solution=" + fileResult.getSolution());',
     "System.out.println(client.getServiceEnvironment());",
 ])
@@ -45,11 +45,11 @@ if reference != copy:
 comparison = re.findall(r"```java\n(.*?)```", reference, re.S)
 
 java_class("CompareOptModel", [comparison[0]], [
-    'System.out.println("OptModel:              optimal=" + result.isOptimal() + " value=" + result.getValue() + " chairs=" + chairs.doubleValue() + " tables=" + tables.doubleValue());',
+    'System.out.println("OptModel:              optimal=" + result.isOptimal() + " value=" + result.doubleValue() + " chairs=" + chairs.doubleValue() + " tables=" + tables.doubleValue());',
 ])
 
 java_class("CompareExpressionsBasedModel", [comparison[1]], [
-    'System.out.println("ExpressionsBasedModel: " + result + " chairs=" + chairs.getValue() + " tables=" + tables.getValue());',
+    'System.out.println("ExpressionsBasedModel: optimal=" + result.isOptimal() + " value=" + result.doubleValue() + " chairs=" + chairs.doubleValue() + " tables=" + tables.doubleValue());',
 ])
 
 java_class("LinearAlgebraSkill", blocks("ojalgo-linear-algebra", "java"), [
@@ -67,5 +67,5 @@ java_class("PortfolioSkill", blocks("ojalgo-portfolio", "java"), [
 
 java_class("OjAlgoSkill", blocks("optimisation-service-ojalgo", "java"), [
     'System.out.println("result: " + result);',
-    'System.out.println("chairs=" + result.doubleValue(model.indexOf(chairs)) + " tables=" + result.doubleValue(model.indexOf(tables)) + " variable.getValue()=" + chairs.getValue());',
+    'System.out.println("chairs=" + chairs.doubleValue() + " tables=" + tables.doubleValue() + " by index: chairs=" + result.doubleValue(model.indexOf(chairs)) + " tables=" + result.doubleValue(model.indexOf(tables)));',
 ])

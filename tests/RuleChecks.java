@@ -29,7 +29,7 @@ import org.ojalgo.type.context.NumberContext;
  * ojAlgo/context7.json (the source; ojalgo.org generates its copies from it), the "Rules that apply to every
  * model" section of the Optimisation Cookbook (www_ojalgo_org/content/optimisation-cookbook.md), and the
  * ojalgo-optimisation, ojalgo-linear-algebra and ojalgo-portfolio skills in this repository. Each check below pins down one behaviour those texts describe.
- * This runs against the latest ojAlgo release (57.4.0 or later), so when a release changes a behaviour the check
+ * This runs against the latest ojAlgo release (58.0.0 or later), so when a release changes a behaviour the check
  * fails and says which texts to update. After updating them, change the check to expect the new behaviour.
  * <p>
  * The current names used in the texts are simply used here, in {@link #currentNames()}: if one of them is
@@ -43,30 +43,42 @@ public class RuleChecks {
 
     public static void main(final String[] args) throws Exception {
 
-        check("A second expression with a name already in use throws IllegalArgumentException", EVERYWHERE + " (the rule about unique expression names)", () -> {
+        check("A second constraint with a name already in use throws IllegalArgumentException", EVERYWHERE + " (the rule about unique expression names)", () -> {
             ExpressionsBasedModel model = new ExpressionsBasedModel();
-            Variable x = model.newVariable("x").lower(0).upper(1000).weight(1);
-            model.newExpression("limit").upper(10).set(x, 1);
+            Variable x = model.newRealVariable("x").lower(0).upper(1000);
+            model.getObjective().set(x, 1);
+            model.newConstraint("limit").upper(10).set(x, 1);
             try {
-                model.newExpression("limit").upper(100).set(x, 1);
+                model.newConstraint("limit").upper(100).set(x, 1);
                 return false; // Accepted: the texts say it throws.
             } catch (IllegalArgumentException cause) {
                 return true;
             }
         });
 
-        check("After an INFEASIBLE result variable.getValue() returns null", EVERYWHERE + " (the rule about checking the state)", () -> {
+        check("After an INFEASIBLE result variable.getValue() returns null and variable.doubleValue() 0", EVERYWHERE + " (the rule about checking the state)", () -> {
             ExpressionsBasedModel model = new ExpressionsBasedModel();
-            Variable x = model.newVariable("x").lower(0).upper(1).weight(1);
-            model.newExpression("impossible").lower(5).set(x, 1);
+            Variable x = model.newRealVariable("x").lower(0).upper(1);
+            model.getObjective().set(x, 1);
+            model.newConstraint("impossible").lower(5).set(x, 1);
             Optimisation.Result result = model.minimise();
-            return !result.getState().isFeasible() && x.getValue() == null;
+            return !result.isFeasible() && x.getValue() == null && x.doubleValue() == 0.0;
+        });
+
+        check("After submit(..) the solution is written into the variables", "the optimisation-service-ojalgo skill (rule 1), references/modellers.md", () -> {
+            ExpressionsBasedModel model = new ExpressionsBasedModel(); // no remote solver: submit(..) solves locally
+            Variable x = model.newIntegerVariable("x").lower(0).upper(10);
+            model.newConstraint("limit").upper(7.5).set(x, 1);
+            model.getObjective().set(x, 1);
+            Optimisation.Result result = model.submit(Optimisation.Sense.MAX).get();
+            return result.isOptimal() && x.intValue() == 7 && result.doubleValue(model.indexOf(x)) == 7.0;
         });
 
         check("A model file written before maximise() says Minimize, written after it says Maximize", "the cookbook's rule 8, the skill's \"When it goes wrong\"", () -> {
             ExpressionsBasedModel model = new ExpressionsBasedModel();
-            Variable x = model.newVariable("x").lower(0).upper(10).weight(1);
-            model.newExpression("limit").upper(4).set(x, 1);
+            Variable x = model.newRealVariable("x").lower(0).upper(10);
+            model.getObjective().set(x, 1);
+            model.newConstraint("limit").upper(4).set(x, 1);
             Path before = Files.createTempFile("before", ".lp");
             Path after = Files.createTempFile("after", ".lp");
             model.writeTo(before);
@@ -171,12 +183,16 @@ public class RuleChecks {
     static void currentNames() throws Exception {
 
         ExpressionsBasedModel model = new ExpressionsBasedModel();
-        Variable x = model.newVariable("x").lower(0).upper(10).weight(1);
-        Variable y = model.newVariable("y").binary();
-        Variable z = model.newVariable("z").integer();
-        Expression expression = model.newExpression("e").lower(0).upper(5).set(x, 1).set(y, 2);
-        model.newExpression("f").level(0).set(z, 1);
-        model.newExpression("q").weight(1).set(x, x, 2);
+        Variable x = model.newRealVariable("x").lower(0).upper(10);
+        Variable y = model.newBinaryVariable("y");
+        Variable z = model.newIntegerVariable("z");
+        Expression expression = model.newConstraint("e").lower(0).upper(5).set(x, 1).set(y, 2);
+        model.newConstraint("f").level(0).set(z, 1);
+        model.getObjective().set(x, 1).set(x, x, 2);
+
+        // Still in the texts, as the older way that still works
+        model.newVariable("w").lower(0).weight(1);
+        model.newExpression("g").upper(5).set(x, 1);
 
         model.options.time_abort = 30_000L;
         model.options.integer(IntegerStrategy.DEFAULT.withGapTolerance(NumberContext.of(3)));
@@ -185,8 +201,11 @@ public class RuleChecks {
 
         model.copy(true).minimise();
         Optimisation.Result result = model.minimise();
-        boolean usable = result.getState().isOptimal() || result.getState().isFeasible();
-        double value = usable ? result.getValue() + x.getValue().doubleValue() + result.doubleValue(model.indexOf(x)) : 0;
+        boolean usable = result.isOptimal() || result.isFeasible() || result.getState().isOptimal();
+        double value = usable ? result.doubleValue() + result.getValue() + x.doubleValue() + x.getValue().doubleValue() + result.doubleValue(model.indexOf(x)) : 0;
+        boolean yes = y.booleanValue();
+        int count = z.intValue();
+        long longCount = z.longValue();
 
         File file = File.createTempFile("model", ".mps");
         model.writeTo(file.toPath());

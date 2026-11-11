@@ -86,7 +86,7 @@ import se.optimatika.optimisation.service.client.OptVariable;
 
 OptModel model = client.newModel();
 
-// Variables: real, integer or binary, with bounds
+// Variables: real, integer or binary. Real and integer variables are free when created - give them bounds.
 OptVariable chairs = model.newIntegerVariable("Chairs").lower(0).upper(100);
 OptVariable tables = model.newIntegerVariable("Tables").lower(0).upper(60);
 OptVariable rush = model.newBinaryVariable("RushOrder");
@@ -95,41 +95,44 @@ OptVariable rush = model.newBinaryVariable("RushOrder");
 model.newConstraint("Wood").upper(400).set(chairs, 5).set(tables, 20);
 model.newConstraint("Labour").upper(450).set(chairs, 10).set(tables, 15).set(rush, -50);
 
-// Objective: one per model
-model.objective().set(chairs, 45).set(tables, 80).set(rush, -250);
+// Objective: one per model. Min or max is decided when solving.
+model.getObjective().set(chairs, 45).set(tables, 80).set(rush, -250);
 
 // maximise() / minimise() return a Future
 OptResult result = model.maximise().get(10, TimeUnit.MINUTES);
 
 if (result.isFeasible()) {
-    double profit = result.getValue().doubleValue();
-    long nbChairs = Math.round(chairs.doubleValue());   // values are written back to the variables
-    long nbTables = Math.round(tables.doubleValue());
-    boolean doRush = rush.doubleValue() > 0.5;
+    double profit = result.doubleValue();
+    int nbChairs = chairs.intValue();   // values are written back to the variables
+    int nbTables = tables.intValue();
+    boolean doRush = rush.booleanValue();
 }
 ```
 
-Quadratic objective terms: `model.objective().set(x, y, coefficient)`.
+Quadratic objective terms: `model.getObjective().set(x, y, coefficient)`.
+
+These are the names ojAlgo's `ExpressionsBasedModel` uses too, from ojAlgo 58, so a model reads the same in both. `objective()` is the deprecated name of `getObjective()`, to be removed in 2.0. Before client 1.1.0, new real and integer variables had a lower bound of 0; now they are free, so give them `lower(0)` where that is meant.
 
 ## Rules
 
 1. **Check `isOptimal()` or `isFeasible()` before reading values.** Without a feasible result the variables hold no solution.
 2. **Put a time limit on waiting**: a timeout on `get(...)` at level 3a, your own deadline in the polling loop at level 2. The server has no solve time limit. To give up on a solve, call `cancel(true)` on the `Future`: that also aborts it on the server and frees the worker. `cancel(false)` only stops waiting locally.
-3. **Round integer and binary values.** Use `Math.round(v.doubleValue())` and `> 0.5`, never `==`.
+3. **Read integer and binary values rounded.** `intValue()` and `longValue()` round; `booleanValue()` is true above 0.5. Never compare a value with `==`.
 4. **Create the client once and reuse it.** Create a new `OptModel` per problem.
 5. **Print `client.getServiceEnvironment()` when something is unexpected.** It shows the server's build, licence state and available solvers.
 
 ## Getting a server
 
-- **To start:** Optimatika's public shared instance, free and without sign-up. Without a licence key it runs like any server without one (below). Never send it confidential models; for those, or for production, the user runs their own instance.
+- **MCP tools:** with the ojAlgo plugin, or the MCP server `https://service-api.optimatika.se/mcp` connected, the assistant has the tools `solve`, `translate` and `environment` on the shared instance. Use `solve` to check a formulation or answer a one-off question; write the user's application against the API above.
+- **To start and to test:** Optimatika's public shared instance, free and without sign-up. For production the user runs their own instance. Without a licence key it runs like any server without one (below). Never send it confidential models.
 
   ```
   https://service-api.optimatika.se
   ```
 
-- **For real use:** the user runs their own instance from the public image `ghcr.io/optimatika/optimisation-service` (port 8080, health check at `/health`). Locally: `docker run -p 8080:8080 ghcr.io/optimatika/optimisation-service`. It runs anywhere containers run. Two rules: keep it to **one instance per service**, because queued models and results live in memory on the instance that accepted them; and keep it **inside the user's network**, because the service has no authentication of its own.
+- **For production:** the user runs their own instance from the public image `ghcr.io/optimatika/optimisation-service` (port 8080, health check at `/health`). Locally: `docker run -p 8080:8080 ghcr.io/optimatika/optimisation-service`. It runs anywhere containers run. Two rules: keep it to **one instance per service**, because queued models and results live in memory on the instance that accepted them; and keep it **inside the user's network**, because the service has no authentication of its own.
 - **Free without a licence key:** ojAlgo's own solvers, one vCPU, models of up to 1,000 variables or constraints, and short time limits. A larger model comes back `FAILED`; a hard one may come back `FEASIBLE` rather than `OPTIMAL`.
-- **With a licence key:** the full solver suite on every vCPU the server is given, within its configurable limits on size and solve time. Keys come with an Optimatika subscription, which includes support: https://www.optimatika.se/subscription/ Set the key in the `OPTIMATIKA_LICENCE_KEY` environment variable. Do not invent prices or plan details; point to that page.
+- **With a licence key:** the full solver suite on every vCPU the server is given, within its configurable limits on size and solve time. Keys come with an Optimatika subscription, which includes support: https://www.optimatika.se/subscription/ On the user's own instance, set the key in its `OPTIMATIKA_LICENCE_KEY` environment variable. On the shared instance, give it to the client, which sends it with every request (client 1.1.0 or later): `OptClientV1.newInstance("https://service-api.optimatika.se", System.getenv("OPTIMATIKA_LICENCE_KEY"))`. Read the key from the environment; never write it into code. Do not invent prices or plan details; point to that page.
 - **To see what a server is:** `GET /optimisation/v1/environment` returns its build, licence state and available solvers. Just after a start it reports `"probed": false` and lists only the pure-Java solvers; ask again a few seconds later for the full list.
 
 Deployment, sizing and configuration: https://www.optimatika.se/optimisation-service/docs/

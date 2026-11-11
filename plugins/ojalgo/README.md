@@ -22,7 +22,7 @@ Six skills in the open [Agent Skills](https://agentskills.io) format. Each is a 
 - `ojalgo-linear-algebra`: equation systems, least squares, matrix decompositions (LU, QR, Cholesky, SVD, eigenvalues) and sparse systems with ojAlgo, instead of hand-written numerics or nested loops over `double[][]`.
 - `ojalgo-portfolio`: portfolio optimisation with Markowitz mean-variance and Black-Litterman, covariance matrices from price histories, and portfolio risk measures.
 
-Three more cover Optimatika's [Optimisation Service](https://www.optimatika.se/optimisation-service/), a solver server with a best-of-breed suite of solvers alongside ojAlgo's own, on Optimatika's public shared instance or deployed by you. The service can be used at three levels, and the skills follow them:
+Three more cover Optimatika's [Optimisation Service](https://www.optimatika.se/optimisation-service/), a solver server with a best-of-breed suite of solvers alongside ojAlgo's own. Try it on Optimatika's public shared instance; in production, deploy your own. The service can be used at three levels, and the skills follow them:
 
 - `optimisation-service-rest` (level 1): the REST API, from any programming language. Submit a model as MPS or LP text, poll for the result.
 - `optimisation-service-client` (levels 2 and 3): the Java client library, for any JVM language. Submit model files with the dedicated client, or build the model in code with its own modeller, `OptModel`, which needs no ojAlgo and runs on older Java versions.
@@ -30,7 +30,9 @@ Three more cover Optimatika's [Optimisation Service](https://www.optimatika.se/o
 
 Each also covers running the server, the free tier and licence keys.
 
-The plugin contains no code, hooks, scripts or MCP servers. It runs nothing, stores nothing and sends nothing anywhere. The skills refer the assistant to public pages on ojalgo.org and optimatika.se. Code that the assistant writes with the service skills sends your model to a server address that you supply.
+The plugin also connects the assistant to the Optimisation Service's MCP server, on Optimatika's public shared instance (`https://service-api.optimatika.se/mcp`). Its tools – `solve`, `translate` and `environment` – let the assistant solve a model itself, for example to check a formulation before writing the code around it. Use is free and needs no sign-up, within the limits of a server without a licence key. A model is sent only when the assistant calls `solve` or `translate`; do not let it send anything confidential. See the [privacy policy](https://www.optimatika.se/privacy-policy/).
+
+Apart from that, the plugin contains no code, hooks or scripts. The skills refer the assistant to public pages on ojalgo.org and optimatika.se. Code that the assistant writes with the service skills sends your model to the server address that you give it.
 
 ## Example prompts
 

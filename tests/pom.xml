@@ -12,12 +12,12 @@
         <dependency>
             <groupId>org.ojalgo</groupId>
             <artifactId>ojalgo</artifactId>
-            <version>[57.4.0,)</version>
+            <version>[58.0.0,)</version>
         </dependency>
         <dependency>
             <groupId>se.optimatika</groupId>
             <artifactId>optimisation-service-client</artifactId>
-            <version>[1.0.0,)</version>
+            <version>[1.1.0,)</version>
         </dependency>
     </dependencies>
 </project>

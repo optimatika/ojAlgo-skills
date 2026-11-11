@@ -29,45 +29,47 @@ Before writing a model from scratch, adapt the closest complete, verified exampl
 ## The API in one example
 
 ```java
-import org.ojalgo.optimisation.Expression;
 import org.ojalgo.optimisation.ExpressionsBasedModel;
 import org.ojalgo.optimisation.Optimisation;
 import org.ojalgo.optimisation.Variable;
 
 ExpressionsBasedModel model = new ExpressionsBasedModel();
 
-// Variables: bounds + weight (= objective coefficient). binary() / integer() for MIP.
-Variable chairs = model.newVariable("Chairs").lower(0).upper(100).weight(45);
-Variable tables = model.newVariable("Tables").lower(0).upper(40).weight(80);
-Variable rush = model.newVariable("Rush order").binary().weight(-200);
+// Variables: real, integer or binary. Real and integer variables are free when created - give them bounds.
+Variable chairs = model.newRealVariable("Chairs").lower(0).upper(100);
+Variable tables = model.newRealVariable("Tables").lower(0).upper(40);
+Variable rush = model.newBinaryVariable("Rush order");
 
-// Constraints: an expression with bounds, then one set(variable, coefficient) per term.
+// Constraints: bounds, then one set(variable, coefficient) per term.
 // lower(..) is >=, upper(..) is <=, level(..) is ==.
-Expression hours = model.newExpression("Machine hours").upper(400);
-hours.set(chairs, 2).set(tables, 5);
+model.newConstraint("Machine hours").upper(400).set(chairs, 2).set(tables, 5);
+
+// Objective: one set(variable, coefficient) per term. Min or max is decided when solving.
+model.getObjective().set(chairs, 45).set(tables, 80).set(rush, -200);
 
 Optimisation.Result result = model.maximise();   // or minimise()
 
-if (!result.getState().isOptimal()) {            // ALWAYS check before reading values
+if (!result.isOptimal()) {                       // ALWAYS check before reading values
     throw new IllegalStateException("Not solved: " + result.getState());
 }
-double profit = result.getValue();
-double nbChairs = chairs.getValue().doubleValue();          // BigDecimal
-boolean doRush = rush.getValue().doubleValue() > 0.5;       // binaries: threshold, never == 1
+double profit = result.doubleValue();
+double nbChairs = chairs.doubleValue();
+boolean doRush = rush.booleanValue();             // binaries: true above 0.5, never compare with == 1
 ```
 
-Quadratic objective (QP): an expression with a weight and quadratic terms.
+Quadratic objective (QP): quadratic terms in the objective.
 
 ```java
-Expression variance = model.newExpression("Variance").weight(1);
-variance.set(w[i], w[j], covariance[i][j]);   // for all i, j; covariance must be PSD
+model.getObjective().set(w[i], w[j], covariance[i][j]);   // for all i, j; covariance must be PSD
 ```
+
+These names - `newRealVariable`, `newIntegerVariable`, `newBinaryVariable`, `newConstraint`, `getObjective()`, `result.isOptimal()`, `result.doubleValue()`, `variable.doubleValue()` - are the ones the Optimisation Service client's `OptModel` uses too, so the same model code reads the same in both. They need ojAlgo 58 or later. Code written with `newVariable(..)`, `newExpression(..)` and weights (`variable.weight(45)`, an expression with `weight(1)` as the objective) still works: weights and `getObjective()` add up, so use one or the other.
 
 ## Rules
 
-1. Check `result.getState()` before using any value. `isOptimal()` = proven optimum. `isFeasible()` = valid solution (accept it when limits are set). After `INFEASIBLE` or `UNBOUNDED`, `variable.getValue()` returns `null` — reading it without the check is a NullPointerException.
-2. Read integer/binary values by rounding: `> 0.5` for binaries, `Math.round(...)` for counts.
-3. Give every variable and expression a unique, meaningful name. `newExpression` with a name that is already in use throws `IllegalArgumentException`. Build names from the loop indices (`"Capacity " + i`).
+1. Check `result.isOptimal()` or `result.isFeasible()` before using any value. `isOptimal()` = proven optimum. `isFeasible()` = valid solution (accept it when limits are set). After `INFEASIBLE` or `UNBOUNDED` there is no solution: `variable.getValue()` returns `null` and `variable.doubleValue()` returns 0 — reading without the check is a NullPointerException or a silently wrong answer.
+2. Read integer/binary values rounded: `intValue()` or `longValue()` for counts (they round), `booleanValue()` for binaries (true above 0.5). Never compare a value with `==`.
+3. Give every variable and constraint a unique, meaningful name. `newConstraint` (or `newExpression`) with a name that is already in use throws `IllegalArgumentException`. Build names from the loop indices (`"Capacity " + i`).
 4. Percentages and ratios are linear rows against a total ("≥ 18% protein" → `sum(protein_i * kg_i) >= 0.18 * batchKg`), never a division.
 5. Link yes/no decisions through the row that already limits the quantity (`sum(size_i * x_ib) - capacity * open_b <= 0`) and add per-pair links (`x_ij - open_i <= 0`) when cheap. Avoid large arbitrary big-M constants; they make MIPs slow and numerically fragile.
 6. Break symmetry between interchangeable resources (`used[b+1] - used[b] <= 0`).
@@ -79,13 +81,13 @@ variance.set(w[i], w[j], covariance[i][j]);   // for all i, j; covariance must b
 
 Much older ojAlgo code is still in circulation. These do not compile with current versions:
 
-- `Variable.make("x")`, `new Variable("x")`, `model.addVariable(variable)` → `model.newVariable("x")`. Variables and expressions are always created by the model.
+- `Variable.make("x")`, `new Variable("x")`, `model.addVariable(variable)` → `model.newRealVariable("x")` (or `newIntegerVariable`, `newBinaryVariable`). Variables and constraints are always created by the model.
 - `expression.setLinearFactor(x, 2)`, `setQuadraticFactor(x, y, 2)` → `expression.set(x, 2)`, `expression.set(x, y, 2)`.
 - `options.mip_gap` → `options.integer(IntegerStrategy.DEFAULT.withGapTolerance(NumberContext.of(3)))`.
 - `PrimitiveMatrix`, `Primitive64Matrix` → `MatrixR064`. `PrimitiveDenseStore`, `Primitive64Store` → `R064Store`. `Primitive64Array` → `ArrayR064`.
 - Packages: `org.ojalgo.constant` → `org.ojalgo.function.constant`; `org.ojalgo.access` → `org.ojalgo.structure`; `org.ojalgo.finance` → `org.ojalgo.data.domain.finance`.
 
-Use the latest version from Maven Central (`org.ojalgo:ojalgo`, 57.4.0 or later), not a version number recalled from memory. Full list: https://www.ojalgo.org/updating-old-code/
+Use the latest version from Maven Central (`org.ojalgo:ojalgo`, 58.0.0 or later), not a version number recalled from memory. Full list: https://www.ojalgo.org/updating-old-code/
 
 ## Production settings
 

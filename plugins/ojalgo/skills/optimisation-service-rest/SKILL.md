@@ -122,15 +122,16 @@ if state in ("OPTIMAL", "FEASIBLE"):
 
 ## Getting a server
 
-- **To start:** Optimatika's public shared instance, free and without sign-up. Without a licence key it runs like any server without one (below). Never send it confidential models; for those, or for production, the user runs their own instance.
+- **MCP tools:** with the ojAlgo plugin, or the MCP server `https://service-api.optimatika.se/mcp` connected, the assistant has the tools `solve`, `translate` and `environment` on the shared instance. Use `solve` to check a formulation or answer a one-off question; write the user's application against the API above.
+- **To start and to test:** Optimatika's public shared instance, free and without sign-up. For production the user runs their own instance. Without a licence key it runs like any server without one (below). Never send it confidential models.
 
   ```
   https://service-api.optimatika.se
   ```
 
-- **For real use:** the user runs their own instance from the public image `ghcr.io/optimatika/optimisation-service` (port 8080, health check at `/health`). Locally: `docker run -p 8080:8080 ghcr.io/optimatika/optimisation-service`. It runs anywhere containers run. Two rules: keep it to **one instance per service**, because queued models and results live in memory on the instance that accepted them; and keep it **inside the user's network**, because the service has no authentication of its own.
+- **For production:** the user runs their own instance from the public image `ghcr.io/optimatika/optimisation-service` (port 8080, health check at `/health`). Locally: `docker run -p 8080:8080 ghcr.io/optimatika/optimisation-service`. It runs anywhere containers run. Two rules: keep it to **one instance per service**, because queued models and results live in memory on the instance that accepted them; and keep it **inside the user's network**, because the service has no authentication of its own.
 - **Free without a licence key:** ojAlgo's own solvers, one vCPU, models of up to 1,000 variables or constraints, and short time limits. A larger model comes back `FAILED`; a hard one may come back `FEASIBLE` rather than `OPTIMAL`.
-- **With a licence key:** the full solver suite on every vCPU the server is given, within its configurable limits on size and solve time. Keys come with an Optimatika subscription, which includes support: https://www.optimatika.se/subscription/ Set the key in the `OPTIMATIKA_LICENCE_KEY` environment variable. Do not invent prices or plan details; point to that page.
+- **With a licence key:** the full solver suite on every vCPU the server is given, within its configurable limits on size and solve time. Keys come with an Optimatika subscription, which includes support: https://www.optimatika.se/subscription/ On the user's own instance, set the key in its `OPTIMATIKA_LICENCE_KEY` environment variable. On the shared instance, send it with every request, as the header `Authorization: Bearer <key>`, and only over HTTPS. Read the key from the environment; never write it into code. Do not invent prices or plan details; point to that page.
 - **To see what a server is:** `GET /optimisation/v1/environment` returns its build, licence state and available solvers. Just after a start it reports `"probed": false` and lists only the pure-Java solvers; ask again a few seconds later for the full list.
 
 Deployment, sizing and configuration: https://www.optimatika.se/optimisation-service/docs/

@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "optimisation-service": {
+      "type": "http",
+      "url": "https://service-api.optimatika.se/mcp"
+    }
+  }
+}

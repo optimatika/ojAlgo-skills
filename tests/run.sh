@@ -56,10 +56,10 @@ java -cp "${CP}" PortfolioSkill; echo
 echo "==> 3/4 Client skill (expect model: value 2200, chairs 24, tables 14, rush 0; file: value 0, it is minimised)"
 java -cp "${CP}" ClientSkill; echo
 
-echo "==> 4/4 ojAlgo skill (expect OPTIMAL 2200, chairs=24 tables=14, variable.getValue()=null)"
+echo "==> 4/4 ojAlgo skill (expect OPTIMAL 2200, chairs=24 tables=14, the same by index)"
 java -cp "${CP}" OjAlgoSkill; echo
 
-echo "==> Modeller comparison (expect value 2200, chairs 24, tables 14, from both)"
+echo "==> Modeller comparison (expect value 2200, chairs 24, tables 14, the same line from both)"
 java -cp "${CP}" CompareOptModel
 java -cp "${CP}" CompareExpressionsBasedModel
 
