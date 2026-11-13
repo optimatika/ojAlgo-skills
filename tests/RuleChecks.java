@@ -29,7 +29,7 @@ import org.ojalgo.type.context.NumberContext;
  * ojAlgo/context7.json (the source; ojalgo.org generates its copies from it), the "Rules that apply to every
  * model" section of the Optimisation Cookbook (www_ojalgo_org/content/optimisation-cookbook.md), and the
  * ojalgo-optimisation, ojalgo-linear-algebra and ojalgo-portfolio skills in this repository. Each check below pins down one behaviour those texts describe.
- * This runs against the latest ojAlgo release (58.0.0 or later), so when a release changes a behaviour the check
+ * This runs against the latest ojAlgo release (57.7.0 or later), so when a release changes a behaviour the check
  * fails and says which texts to update. After updating them, change the check to expect the new behaviour.
  * <p>
  * The current names used in the texts are simply used here, in {@link #currentNames()}: if one of them is

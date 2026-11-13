@@ -63,7 +63,7 @@ Quadratic objective (QP): quadratic terms in the objective.
 model.getObjective().set(w[i], w[j], covariance[i][j]);   // for all i, j; covariance must be PSD
 ```
 
-These names - `newRealVariable`, `newIntegerVariable`, `newBinaryVariable`, `newConstraint`, `getObjective()`, `result.isOptimal()`, `result.doubleValue()`, `variable.doubleValue()` - are the ones the Optimisation Service client's `OptModel` uses too, so the same model code reads the same in both. They need ojAlgo 58 or later. Code written with `newVariable(..)`, `newExpression(..)` and weights (`variable.weight(45)`, an expression with `weight(1)` as the objective) still works: weights and `getObjective()` add up, so use one or the other.
+These names - `newRealVariable`, `newIntegerVariable`, `newBinaryVariable`, `newConstraint`, `getObjective()`, `result.isOptimal()`, `result.doubleValue()`, `variable.doubleValue()` - are the ones the Optimisation Service client's `OptModel` uses too, so the same model code reads the same in both. They need ojAlgo 57.7.0 or later. Code written with `newVariable(..)`, `newExpression(..)` and weights (`variable.weight(45)`, an expression with `weight(1)` as the objective) still works: weights and `getObjective()` add up, so use one or the other.
 
 ## Rules
 
@@ -87,7 +87,7 @@ Much older ojAlgo code is still in circulation. These do not compile with curren
 - `PrimitiveMatrix`, `Primitive64Matrix` → `MatrixR064`. `PrimitiveDenseStore`, `Primitive64Store` → `R064Store`. `Primitive64Array` → `ArrayR064`.
 - Packages: `org.ojalgo.constant` → `org.ojalgo.function.constant`; `org.ojalgo.access` → `org.ojalgo.structure`; `org.ojalgo.finance` → `org.ojalgo.data.domain.finance`.
 
-Use the latest version from Maven Central (`org.ojalgo:ojalgo`, 58.0.0 or later), not a version number recalled from memory. Full list: https://www.ojalgo.org/updating-old-code/
+Use the latest version from Maven Central (`org.ojalgo:ojalgo`, 57.7.0 or later), not a version number recalled from memory. Full list: https://www.ojalgo.org/updating-old-code/
 
 ## Production settings
 

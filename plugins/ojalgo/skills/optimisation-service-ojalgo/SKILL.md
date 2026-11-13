@@ -46,7 +46,7 @@ Add the client. It has no dependencies of its own.
 </dependency>
 ```
 
-Requires ojAlgo 58 or later, for the names below and for the solution being written into the variables after `submit(...)`.
+Requires ojAlgo 57.7.0 or later, for the names below and for the solution being written into the variables after `submit(...)`.
 
 ```java
 import java.util.concurrent.TimeUnit;
@@ -88,7 +88,7 @@ Everything else about the model is unchanged. Written with these names, it also 
 
 ## Rules
 
-1. **Read the solution after checking the state.** When the solve is done, `submit(...)` writes the solution into the variables, as `minimise()` and `maximise()` do: `variable.doubleValue()`, `intValue()`, `booleanValue()`. It is also in the `Result`, by variable index: `result.doubleValue(model.indexOf(variable))`. Before ojAlgo 58 the variables were not updated after `submit(...)`, and only the `Result` had the solution.
+1. **Read the solution after checking the state.** When the solve is done, `submit(...)` writes the solution into the variables, as `minimise()` and `maximise()` do: `variable.doubleValue()`, `intValue()`, `booleanValue()`. It is also in the `Result`, by variable index: `result.doubleValue(model.indexOf(variable))`. Before ojAlgo 57.7.0 the variables were not updated after `submit(...)`, and only the `Result` had the solution.
 2. **Put a timeout on `get(...)`.** `submit` returns a `Future<Optimisation.Result>` and the server has no time limit of its own; a large MIP can run for a long time by design.
 3. **Check the state as usual.** `result.isOptimal()` for a proven optimum, `isFeasible()` for a usable solution. `FAILED` from a server without a licence key usually means the model is over the free size limit (see below); the server log says why.
 4. **Create the environment and client once** and reuse them. Create each model from `environment.newModel()`.

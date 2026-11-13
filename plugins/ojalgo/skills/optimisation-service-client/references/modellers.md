@@ -2,7 +2,7 @@
 
 Two modellers can build a model for the Optimisation Service. `OptModel` is part of the client library `optimisation-service-client`: no ojAlgo dependency, kept working on older Java versions, always solves on the service. `ExpressionsBasedModel` is ojAlgo's modeller: far richer, solves in-process or on the service, and follows the latest Java version.
 
-They are separate implementations, but from ojAlgo 58 and client 1.1.0 they share their names: what both can do is written the same way in both. Write either one that way, and translating a model is mostly a matter of changing the types and how the model is created and solved.
+They are separate implementations, but from ojAlgo 57.7.0 and client 1.1.0 they share their names: what both can do is written the same way in both. Write either one that way, and translating a model is mostly a matter of changing the types and how the model is created and solved.
 
 Use this file to write either one, or to translate a model from one to the other. The same comparison, for people: https://www.optimatika.se/optimisation-service/docs/expressionsbasedmodel-vs-optmodel/
 
@@ -98,7 +98,7 @@ Written with the shared names, a model translates by changing four things: how t
 
 - Each `variable.weight(w)` becomes `model.getObjective().set(variable, w)`. For each expression with `weight(w)`, add its terms to the objective multiplied by `w`. If that expression also has a lower or upper limit, it is a constraint as well: create a `newConstraint` for the limits.
 - The other old names: `newVariable("x")` is `newRealVariable("x")`, with `.integer()` it is `newIntegerVariable`, with `.binary()` `newBinaryVariable`; `newExpression("c")` is `newConstraint("c")`; `result.getState().isOptimal()` is `result.isOptimal()`; `result.getValue()` is `result.doubleValue()`; `x.getValue().doubleValue()` is `x.doubleValue()`.
-- Before ojAlgo 58 the variables were not updated after `submit(...)`; such code reads the solution from the result, `result.doubleValue(model.indexOf(x))`, which still works.
+- Before ojAlgo 57.7.0 the variables were not updated after `submit(...)`; such code reads the solution from the result, `result.doubleValue(model.indexOf(x))`, which still works.
 
 **What does not translate from ojAlgo.** Quadratic constraints, solver options (`model.options`), `add(...)` to accumulate a coefficient (`OptModel` has only `set(...)`, which replaces), and solving in-process have no `OptModel` counterpart. If the model needs those, keep it in ojAlgo.
 

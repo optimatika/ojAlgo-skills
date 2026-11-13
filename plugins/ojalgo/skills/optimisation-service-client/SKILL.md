@@ -111,7 +111,7 @@ if (result.isFeasible()) {
 
 Quadratic objective terms: `model.getObjective().set(x, y, coefficient)`.
 
-These are the names ojAlgo's `ExpressionsBasedModel` uses too, from ojAlgo 58, so a model reads the same in both. `objective()` is the deprecated name of `getObjective()`, to be removed in 2.0. Before client 1.1.0, new real and integer variables had a lower bound of 0; now they are free, so give them `lower(0)` where that is meant.
+These are the names ojAlgo's `ExpressionsBasedModel` uses too, from ojAlgo 57.7.0, so a model reads the same in both. `objective()` is the deprecated name of `getObjective()`, to be removed in 2.0. Before client 1.1.0, new real and integer variables had a lower bound of 0; now they are free, so give them `lower(0)` where that is meant.
 
 ## Rules
 
