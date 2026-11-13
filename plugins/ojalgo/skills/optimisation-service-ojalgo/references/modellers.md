@@ -100,7 +100,7 @@ Written with the shared names, a model translates by changing four things: how t
 - The other old names: `newVariable("x")` is `newRealVariable("x")`, with `.integer()` it is `newIntegerVariable`, with `.binary()` `newBinaryVariable`; `newExpression("c")` is `newConstraint("c")`; `result.getState().isOptimal()` is `result.isOptimal()`; `result.getValue()` is `result.doubleValue()`; `x.getValue().doubleValue()` is `x.doubleValue()`.
 - Before ojAlgo 58 the variables were not updated after `submit(...)`; such code reads the solution from the result, `result.doubleValue(model.indexOf(x))`, which still works.
 
-**What does not translate from ojAlgo.** Quadratic constraints, solver options (`model.options`), special ordered sets, `add(...)` to accumulate a coefficient (`OptModel` has only `set(...)`, which replaces), and solving in-process have no `OptModel` counterpart. If the model needs those, keep it in ojAlgo.
+**What does not translate from ojAlgo.** Quadratic constraints, solver options (`model.options`), `add(...)` to accumulate a coefficient (`OptModel` has only `set(...)`, which replaces), and solving in-process have no `OptModel` counterpart. If the model needs those, keep it in ojAlgo.
 
 **What does not translate from `OptModel`.** Constant terms, `constant(...)`, and a value receiver given when a variable is created, `model.newRealVariable("x", value -> ...)`.
 
