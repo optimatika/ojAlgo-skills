@@ -30,7 +30,7 @@ Three more cover Optimatika's [Optimisation Service](https://www.optimatika.se/o
 
 Each also covers running the server, the free tier and licence keys.
 
-The plugin also connects the assistant to the Optimisation Service's MCP server, on Optimatika's public shared instance (`https://service-api.optimatika.se/mcp`). Its tools – `solve`, `translate` and `environment` – let the assistant solve a model itself, for example to check a formulation before writing the code around it. Use is free and needs no sign-up, within the limits of a server without a licence key. A model is sent only when the assistant calls `solve` or `translate`; do not let it send anything confidential. See the [privacy policy](https://www.optimatika.se/privacy-policy/).
+The plugin also connects the assistant to the Optimisation Service's MCP server, on Optimatika's public shared instance (`https://service-api.optimatika.se/optimisation/mcp`). Its tools – `solve`, `translate` and `environment` – let the assistant solve a model itself, for example to check a formulation before writing the code around it. Use is free and needs no sign-up, within the limits of a server without a licence key. A model is sent only when the assistant calls `solve` or `translate`; do not let it send anything confidential. See the [privacy policy](https://www.optimatika.se/privacy-policy/).
 
 Apart from that, the plugin contains no code, hooks or scripts. The skills refer the assistant to public pages on ojalgo.org and optimatika.se. Code that the assistant writes with the service skills sends your model to the server address that you give it.
 

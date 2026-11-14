@@ -30,7 +30,7 @@ With the first one, an assistant that is asked to allocate, assign, schedule, pa
 /plugin install ojalgo@ojalgo
 ```
 
-**MCP server:** the plugin connects to the Optimisation Service's MCP server on the public shared instance, `https://service-api.optimatika.se/mcp` (tools `solve`, `translate`, `environment`; free, no sign-up, within the limits of a server without a licence key). Any assistant that supports remote MCP servers can connect to it directly.
+**MCP server:** the plugin connects to the Optimisation Service's MCP server on the public shared instance, `https://service-api.optimatika.se/optimisation/mcp` (tools `solve`, `translate`, `environment`; free, no sign-up, within the limits of a server without a licence key). Any assistant that supports remote MCP servers can connect to it directly.
 
 **Other agents:** each skill is a plain `SKILL.md` in the open Agent Skills format. For any agent that supports skills, copy the folders under [`plugins/ojalgo/skills`](plugins/ojalgo/skills) into that agent's skills directory. For one that does not, the files still work as reference material to give the agent as context.
 

@@ -123,7 +123,7 @@ These are the names ojAlgo's `ExpressionsBasedModel` uses too, from ojAlgo 57.7.
 
 ## Getting a server
 
-- **MCP tools:** with the ojAlgo plugin, or the MCP server `https://service-api.optimatika.se/mcp` connected, the assistant has the tools `solve`, `translate` and `environment` on the shared instance. Use `solve` to check a formulation or answer a one-off question; write the user's application against the API above.
+- **MCP tools:** with the ojAlgo plugin, or the MCP server `https://service-api.optimatika.se/optimisation/mcp` connected, the assistant has the tools `solve`, `translate` and `environment` on the shared instance. Use `solve` to check a formulation or answer a one-off question; write the user's application against the API above.
 - **To start and to test:** Optimatika's public shared instance, free and without sign-up. For production the user runs their own instance. Without a licence key it runs like any server without one (below). Never send it confidential models.
 
   ```
