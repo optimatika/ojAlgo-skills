@@ -1,6 +1,7 @@
 {
   "name": "ojalgo",
   "displayName": "ojAlgo",
+  "version": "1.0.25",
   "description": "Write correct, fast optimisation models (LP, QP, MIP), linear algebra (equation systems, least squares, decompositions) and portfolio optimisation (Markowitz, Black-Litterman) in Java, Kotlin, Scala or any other JVM language with ojAlgo.",
   "author": {
     "name": "Optimatika AB",
@@ -8,5 +9,19 @@
   },
   "homepage": "https://www.ojalgo.org/",
   "repository": "https://github.com/optimatika/ojAlgo-skills",
-  "license": "MIT"
+  "license": "MIT",
+  "icon": "./.claude-plugin/icon.png",
+  "documentationUrl": "https://github.com/optimatika/ojAlgo-skills#readme",
+  "supportUrl": "https://www.ojalgo.org/support-community/",
+  "privacyPolicyUrl": "https://www.optimatika.se/privacy-policy/",
+  "termsOfServiceUrl": "https://www.optimatika.se/optimisation-service/eula/",
+  "userConfig": {
+    "licence_key": {
+      "type": "string",
+      "title": "Optimatika licence key (optional)",
+      "description": "The licence key of your Optimatika Subscription. Leave it empty to use the Optimisation Service's shared instance free, within its limits without a key. With a key, the MCP tools run licensed and their usage is billed to your subscription.",
+      "sensitive": true,
+      "default": ""
+    }
+  }
 }

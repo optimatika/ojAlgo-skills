@@ -11,10 +11,10 @@
   "websiteURL": "https://www.ojalgo.org/",
   "supportURL": "https://www.ojalgo.org/support-community/",
   "privacyPolicyURL": "https://www.optimatika.se/privacy-policy/",
-  "termsOfServiceURL": "https://github.com/optimatika/ojAlgo-skills/blob/master/LICENSE",
+  "termsOfServiceURL": "https://www.optimatika.se/optimisation-service/eula/",
   "defaultPrompt": [
     "Assign 40 orders to 6 trucks with weight limits, using as few trucks as possible. Java, with ojAlgo.",
     "This ojAlgo model returns INFEASIBLE. Help me find which constraint is the problem.",
-    "This ojAlgo MIP is too slow. Show me how to solve it on the Optimisation Service instead."
+    "Items have values 10, 13, 7, 8 and weights 5, 6, 3, 4; the bag holds 10. Solve it on the Optimisation Service."
   ]
 }

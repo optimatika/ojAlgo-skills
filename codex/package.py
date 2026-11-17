@@ -8,8 +8,10 @@ description, author, licence and links. Nothing in it is copied by hand: this sc
 (.codex-plugin/plugin.json) inside the zip. The only text kept for OpenAI alone is codex/listing.json, which holds
 what their listing asks for and Claude's does not (a 30-character subtitle, category, capability labels, support, privacy and terms links, starter prompts).
 
-OpenAI requires an explicit version; Claude's manifest has none on purpose. The version is derived: 1.0.<number of
-commits that touched plugins/ojalgo or codex>. It goes up by itself whenever the package changes, and not otherwise.
+The version is the one in Claude's manifest, which codex/plugin_version.py derives – 1.0.<number of commits that
+changed plugins/ojalgo or codex> – and a GitHub Action writes after each push. It goes up by itself whenever the
+package changes, and not otherwise. This script stops if the manifest's version is not the derived one: pull the
+Action's commit first.
 
 The zip is uploaded by hand at https://platform.openai.com/plugins ("Upload new or existing plugin").
 """
@@ -20,17 +22,22 @@ import subprocess
 import sys
 import zipfile
 
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
+import plugin_version  # noqa: E402
+
 root = pathlib.Path(__file__).resolve().parent.parent
 plugin = root / "plugins" / "ojalgo"
 claude = json.loads((plugin / ".claude-plugin" / "plugin.json").read_text(encoding="utf-8"))
 listing = json.loads((root / "codex" / "listing.json").read_text(encoding="utf-8"))
 
-count = subprocess.run(["git", "rev-list", "--count", "HEAD", "--", "plugins/ojalgo", "codex"], cwd=root, capture_output=True, text=True, check=True).stdout.strip()
-version = "1.0." + count
-
 dirty = subprocess.run(["git", "status", "--porcelain", "--", "plugins/ojalgo", "codex"], cwd=root, capture_output=True, text=True, check=True).stdout.strip()
 if dirty:
     sys.exit("plugins/ojalgo or codex has uncommitted changes. Commit first: the version number is counted from the commits.\n" + dirty)
+
+version = claude.get("version")
+if version != plugin_version.derived():
+    sys.exit(f"plugin.json has version {version}, the commits make it {plugin_version.derived()}. Push, then pull the GitHub Action's "
+             "version commit, or run codex/plugin_version.py --write and commit.")
 
 # The long description is put together from the skills themselves.
 skills = []

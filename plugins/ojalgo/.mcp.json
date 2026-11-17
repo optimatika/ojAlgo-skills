@@ -2,7 +2,10 @@
   "mcpServers": {
     "optimisation-service": {
       "type": "http",
-      "url": "https://service-api.optimatika.se/optimisation/mcp"
+      "url": "https://service-api.optimatika.se/optimisation/mcp",
+      "headers": {
+        "Authorization": "Bearer ${user_config.licence_key}"
+      }
     }
   }
 }

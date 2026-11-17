@@ -1,0 +1,40 @@
+# Keeps "version" in plugins/ojalgo/.claude-plugin/plugin.json current. Anthropic's directory asks for one, raised
+# with every release; codex/plugin_version.py derives it from the commits. A push by this workflow does not start it
+# again.
+name: Plugin version
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - "plugins/ojalgo/**"
+      - "codex/**"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: plugin-version
+  cancel-in-progress: false
+
+jobs:
+  version:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+          fetch-depth: 0
+      - name: Write the version
+        id: version
+        run: echo "version=$(python3 codex/plugin_version.py --write)" >> "$GITHUB_OUTPUT"
+      - name: Commit it
+        run: |
+          if git diff --quiet; then
+            echo "plugin.json already has ${{ steps.version.outputs.version }}"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -am "Set plugin version ${{ steps.version.outputs.version }}"
+          git push
