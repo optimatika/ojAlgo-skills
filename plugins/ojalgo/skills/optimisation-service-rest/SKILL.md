@@ -58,15 +58,15 @@ The `result` string is: the solver state, the objective value, then `@` and the 
 ## With curl
 
 ```bash
-HOST=https://your-service-host
+SERVER=https://your-service-host
 
-KEY=$(curl -s -X POST \
+SOLVE=$(curl -s -X POST \
   -H "Content-Type: application/octet-stream" \
   --data-binary @model.mps \
-  "$HOST/optimisation/v1/put-on-queue/MPS/MIN" | jq -r '.key')
+  "$SERVER/optimisation/v1/put-on-queue/MPS/MIN" | jq -r '.key')
 
 while true; do
-  RESULT=$(curl -s "$HOST/optimisation/v1/poll-result/$KEY")
+  RESULT=$(curl -s "$SERVER/optimisation/v1/poll-result/$SOLVE")
   [ "$(echo "$RESULT" | jq -r '.status')" = "PENDING" ] || break
   sleep 1
 done
@@ -79,10 +79,10 @@ echo "$RESULT"
 import time
 import requests
 
-HOST = "https://your-service-host"
+SERVER = "https://your-service-host"
 
 with open("model.lp", "rb") as f:
-    submitted = requests.post(f"{HOST}/optimisation/v1/put-on-queue/LP/MAX", data=f.read(),
+    submitted = requests.post(f"{SERVER}/optimisation/v1/put-on-queue/LP/MAX", data=f.read(),
                               headers={"Content-Type": "application/octet-stream"}, timeout=30)
 submitted.raise_for_status()
 key = submitted.json()["key"]
@@ -90,7 +90,7 @@ key = submitted.json()["key"]
 deadline = time.time() + 600          # the server has no time limit; set your own
 delay = 0.1
 while True:
-    poll = requests.get(f"{HOST}/optimisation/v1/poll-result/{key}", timeout=30)
+    poll = requests.get(f"{SERVER}/optimisation/v1/poll-result/{key}", timeout=30)
     poll.raise_for_status()
     body = poll.json()
     if body["status"] != "PENDING":
