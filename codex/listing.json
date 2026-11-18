@@ -17,7 +17,7 @@
     "This ojAlgo model returns INFEASIBLE. Help me find which constraint is the problem.",
     "Items have values 10, 13, 7, 8 and weights 5, 6, 3, 4; the bag holds 10. Solve it on the Optimisation Service."
   ],
-  "serviceDescription": "With the Optimisation Service connected, the assistant can also solve models itself. solve takes a linear, quadratic or mixed-integer model as text (LP, MPS or ojAlgo's EBM format) and returns the solution state, the objective value and each variable's value by name; translate converts a model between those formats; environment reports the limits. The service's shared instance is free and needs no account, for models of up to 1,000 variables or constraints and solves of up to 60 seconds. It is for getting started and tests, not production.",
+  "serviceDescription": "With the Optimisation Service connected, the assistant can also solve models itself. solve takes a linear, quadratic or mixed-integer model as text (LP, MPS or ojAlgo's EBM format) and returns the solution state, the objective value and each variable's value by name; translate converts a model between those formats; environment reports the limits. The plugin uses the service's shared instance, which needs no account and takes models of up to 1,000 variables or constraints and solves of up to 60 seconds. It is meant for getting started and tests, not production.",
   "review": {
     "test_cases": {
       "positive": [
@@ -74,5 +74,5 @@
     "commerce": false,
     "commerce_description": "The plugin sells nothing and takes no payments. The Optimisation Service's shared instance is free to use through it."
   },
-  "releaseNotes": "Adds the Optimisation Service's MCP server to the ojAlgo skills. The assistant can solve linear, quadratic and mixed-integer models given as text (LP, MPS or ojAlgo's EBM format) and get the solution state, the objective value and each variable's value by name; translate models between formats; and read the service's limits and solvers. Free and without sign-up, for models of up to 1,000 variables or constraints. The skills teach the assistant to write optimisation, linear algebra and portfolio code with ojAlgo in Java and other JVM languages, and to use the service from any language."
+  "releaseNotes": "Adds the Optimisation Service's MCP server to the ojAlgo skills. The assistant can solve linear, quadratic and mixed-integer models given as text (LP, MPS or ojAlgo's EBM format) and get the solution state, the objective value and each variable's value by name; translate models between formats; and read the service's limits and solvers. No account is needed, for models of up to 1,000 variables or constraints. The skills teach the assistant to write optimisation, linear algebra and portfolio code with ojAlgo in Java and other JVM languages, and to use the service from any language."
 }
