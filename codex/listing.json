@@ -16,5 +16,63 @@
     "Assign 40 orders to 6 trucks with weight limits, using as few trucks as possible. Java, with ojAlgo.",
     "This ojAlgo model returns INFEASIBLE. Help me find which constraint is the problem.",
     "Items have values 10, 13, 7, 8 and weights 5, 6, 3, 4; the bag holds 10. Solve it on the Optimisation Service."
-  ]
+  ],
+  "serviceDescription": "With the Optimisation Service connected, the assistant can also solve models itself. solve takes a linear, quadratic or mixed-integer model as text (LP, MPS or ojAlgo's EBM format) and returns the solution state, the objective value and each variable's value by name; translate converts a model between those formats; environment reports the limits. The service's shared instance is free and needs no account, for models of up to 1,000 variables or constraints and solves of up to 60 seconds. It is for getting started and tests, not production.",
+  "review": {
+    "test_cases": {
+      "positive": [
+        {
+          "description": "Production planning, a linear programme",
+          "prompt": "A workshop makes chairs (profit 45, 2 machine hours each) and tables (profit 80, 5 machine hours each). There are 400 machine hours, and at most 100 chairs and 40 tables can be sold. How many of each maximise profit? Solve it on the Optimisation Service.",
+          "tools_triggered": "solve",
+          "expected_behavior": "Calls solve with an LP model. The result is OPTIMAL: 100 chairs and 40 tables, profit 7,700."
+        },
+        {
+          "description": "Knapsack, a mixed-integer programme with binary variables",
+          "prompt": "Items have values 10, 13, 7, 8 and weights 5, 6, 3, 4. The bag holds weight 10. Which items should I take for the most value? Solve it on the Optimisation Service.",
+          "tools_triggered": "solve",
+          "expected_behavior": "Calls solve with binary variables. The result is OPTIMAL: items 2 and 4, value 21."
+        },
+        {
+          "description": "Portfolio, a quadratic programme",
+          "prompt": "I want to split my savings between three funds – bonds, property and stocks – with expected yearly returns of 5%, 8% and 12%. Their covariance matrix is: bonds 0.010, 0.002, 0.001; property 0.002, 0.030, 0.010; stocks 0.001, 0.010, 0.080. Which split has the lowest risk (variance) while expecting at least 8% a year, with no short selling? Solve it on the Optimisation Service.",
+          "tools_triggered": "solve",
+          "expected_behavior": "Calls solve with a quadratic objective. The result is OPTIMAL: about 37.4% bonds, 34.6% property and 28.0% stocks, variance 0.0139."
+        },
+        {
+          "description": "Converting a model between file formats",
+          "prompt": "Convert this LP-format model to MPS with the Optimisation Service: Maximize value: 10 x1 + 13 x2 + 7 x3 + 8 x4 Subject To weight: 5 x1 + 6 x2 + 3 x3 + 4 x4 <= 10 Binary x1 x2 x3 x4 End",
+          "tools_triggered": "translate",
+          "expected_behavior": "Calls translate from LP to MPS and shows the same model as MPS text, with the four variables binary (BV bounds)."
+        },
+        {
+          "description": "The service's limits and solvers",
+          "prompt": "Ask the Optimisation Service how large a model it solves for free, and which solvers it has.",
+          "tools_triggered": "environment",
+          "expected_behavior": "Calls environment and reports up to 1,000 variables or constraints without a licence key, a 60-second limit, and ojAlgo's own solvers."
+        }
+      ],
+      "negative": [
+        {
+          "description": "A general-knowledge question has nothing to solve",
+          "prompt": "What is the capital of Sweden?",
+          "expected_behavior": "Answers directly, without calling any tool."
+        },
+        {
+          "description": "A conceptual question about optimisation needs no solve",
+          "prompt": "Explain the difference between linear programming and mixed-integer programming.",
+          "expected_behavior": "Explains the difference, without calling any tool."
+        },
+        {
+          "description": "A programming task unrelated to optimisation",
+          "prompt": "Write a Python function that computes a moving average of a list.",
+          "expected_behavior": "Writes the function, without calling any tool."
+        }
+      ]
+    },
+    "demo_recording_url": "https://youtu.be/_AQcJPNBVd0",
+    "commerce": false,
+    "commerce_description": "The plugin sells nothing and takes no payments. The Optimisation Service's shared instance is free to use through it."
+  },
+  "releaseNotes": "Adds the Optimisation Service's MCP server to the ojAlgo skills. The assistant can solve linear, quadratic and mixed-integer models given as text (LP, MPS or ojAlgo's EBM format) and get the solution state, the objective value and each variable's value by name; translate models between formats; and read the service's limits and solvers. Free and without sign-up, for models of up to 1,000 variables or constraints. The skills teach the assistant to write optimisation, linear algebra and portfolio code with ojAlgo in Java and other JVM languages, and to use the service from any language."
 }
